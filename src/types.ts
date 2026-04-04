@@ -1,6 +1,6 @@
 export interface Package {
   id: string;
-  emoji: string;
+  iconName: string;
   title: string;
   desc: string;
   tag: string;

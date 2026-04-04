@@ -3,7 +3,7 @@ import { Package, BuffetOption } from './types';
 export const PACKAGES: Package[] = [
   {
     id: 'aniversario',
-    emoji: '🎂',
+    iconName: 'Cake',
     title: 'Aniversário em família',
     desc: 'Pizza, bolo, espaço kids e muito afeto. O lugar certo para celebrar.',
     tag: 'Até 100 pessoas',
@@ -13,7 +13,7 @@ export const PACKAGES: Package[] = [
   },
   {
     id: 'bodas',
-    emoji: '💍',
+    iconName: 'HeartHandshake',
     title: 'Bodas & Mini casamento',
     desc: 'Um ambiente acolhedor para os momentos mais especiais da vida a dois.',
     tag: 'Ambiente íntimo',
@@ -23,7 +23,7 @@ export const PACKAGES: Package[] = [
   },
   {
     id: 'confra',
-    emoji: '🤝',
+    iconName: 'Users',
     title: 'Confraternização',
     desc: 'Reúna a equipe ou os amigos. Buffet farto e estrutura completa.',
     tag: 'Corporativo & social',
@@ -33,7 +33,7 @@ export const PACKAGES: Package[] = [
   },
   {
     id: 'fechado',
-    emoji: '🔒',
+    iconName: 'Star',
     title: 'Evento exclusivo',
     desc: 'Salão reservado só para você. Total privacidade e atenção.',
     tag: 'Reserva exclusiva',

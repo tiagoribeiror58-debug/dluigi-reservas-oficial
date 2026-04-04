@@ -1,3 +1,5 @@
+import { UtensilsCrossed } from 'lucide-react';
+
 interface HeroProps {
   onCtaClick: () => void;
 }
@@ -8,15 +10,14 @@ export default function Hero({ onCtaClick }: HeroProps) {
       <div
         className="hero-img"
         style={{
-          background: 'linear-gradient(135deg,#3a0a0a,#7A1515)',
+          background: 'radial-gradient(circle at top right, #4a0f0f 0%, #1a0a0a 60%, #0a0404 100%)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          fontSize: '120px',
-          opacity: '0.18',
+          overflow: 'hidden'
         }}
       >
-        🍕
+        <UtensilsCrossed size={400} color="#7A1515" strokeWidth={0.5} style={{ opacity: 0.2, transform: 'rotate(-10deg) translate(20px, -20px)' }} />
       </div>
       <div className="hero-overlay"></div>
       <div className="hero-content">

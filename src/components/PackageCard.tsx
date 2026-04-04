@@ -1,4 +1,5 @@
 import { Package } from '../types';
+import * as Icons from 'lucide-react';
 
 interface PackageCardProps {
   package: Package;
@@ -17,7 +18,10 @@ export default function PackageCard({ package: pkg, isSelected, onSelect }: Pack
         className="pkg-img-placeholder"
         style={{ background: `linear-gradient(135deg,${pkg.color},#e8d0be)` }}
       >
-        {pkg.emoji}
+        {(() => {
+          const Icon = (Icons as any)[pkg.iconName];
+          return Icon ? <Icon size={40} strokeWidth={1.5} color="var(--red)" /> : null;
+        })()}
       </div>
       <div className="pkg-body">
         <div className="pkg-title">{pkg.title}</div>

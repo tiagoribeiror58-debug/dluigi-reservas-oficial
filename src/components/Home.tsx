@@ -4,6 +4,8 @@ import { PACKAGES } from '../constants';
 import { validateForm, getBlockedDates, detectPeriod } from '../utils';
 import { supabase } from '../supabase';
 import Hero from './Hero';
+import VideoSection from './VideoSection';
+import PhotoGallery from './PhotoGallery';
 import PackagesSection from './PackagesSection';
 import ReservationForm from './ReservationForm';
 import Footer from './Footer';
@@ -92,14 +94,34 @@ export default function Home({ onSuccess }: HomeProps) {
     if (el) el.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const scrollToForm = () => {
-    const el = document.getElementById('form-section');
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
-  };
+
 
   return (
     <>
       <Hero onCtaClick={scrollToPackages} />
+      <VideoSection 
+        title="Conheça o Nosso Espaço" 
+        subtitle="Assista aos nossos vídeos e sinta a atmosfera perfeita para a sua família"
+        videos={[
+          { id: '1', url: '/videos/video1.mp4', title: 'Espaço Amplo e Kids' },
+          { id: '2', url: '/videos/video2.mp4', title: 'D\'Luigi Pizzaria' }
+        ]}
+      />
+      <PhotoGallery />
+      <div className="divider my-8">
+        <hr />
+      </div>
+      <VideoSection 
+        title="Celebre Conosco" 
+        subtitle="O lugar ideal para suas festas e confraternizações"
+        videos={[
+          { id: '3', url: '/videos/video3.mp4', title: 'Festas de Final de Ano' },
+          { id: '4', url: '/videos/video4.mp4', title: 'Confraternização' }
+        ]}
+      />
+      <div className="divider my-6">
+        <hr />
+      </div>
       <PackagesSection selectedPackage={selectedPackage} onSelectPackage={handlePackageSelect} />
       <div className="divider">
         <hr />
