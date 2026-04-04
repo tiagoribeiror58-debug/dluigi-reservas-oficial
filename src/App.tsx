@@ -10,27 +10,22 @@ type Screen = 'home' | 'success' | 'admin-login' | 'admin';
 
 function App() {
   const [screen, setScreen] = useState<Screen>('home');
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
   useEffect(() => {
-    checkAuth();
+    if (window.location.pathname === '/admin') {
+      setScreen('admin');
+    } else {
+      checkAuth();
+    }
   }, []);
 
   const checkAuth = () => {
     const auth = localStorage.getItem('admin_auth') === 'true';
-    setIsAuthenticated(auth);
     if (auth && screen === 'admin-login') {
       setScreen('admin');
     }
   };
 
-  const handleAdminClick = () => {
-    if (isAuthenticated) {
-      setScreen('admin');
-    } else {
-      setScreen('admin-login');
-    }
-  };
+  // onAdminClick is removed as requested
 
   const handleReserveClick = () => {
     if (screen !== 'home') {
@@ -52,13 +47,12 @@ function App() {
   };
 
   const handleAdminLoginSuccess = () => {
-    setIsAuthenticated(true);
     setScreen('admin');
   };
 
   return (
     <>
-      <Header onAdminClick={handleAdminClick} onReserveClick={handleReserveClick} />
+      <Header onReserveClick={handleReserveClick} />
       {screen === 'home' && <Home onSuccess={handleSuccess} />}
       {screen === 'success' && (
         <>

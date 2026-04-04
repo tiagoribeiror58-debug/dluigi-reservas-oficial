@@ -38,7 +38,7 @@ export default function VideoSection({ title, subtitle, videos }: VideoSectionPr
             onClick={() => setActiveVideo(video)}
           >
             <video 
-              src={video.url} 
+              src={`${video.url}#t=0.001`}
               className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-300"
               muted
               playsInline

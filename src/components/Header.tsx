@@ -1,11 +1,10 @@
 interface HeaderProps {
-  onAdminClick: () => void;
   onReserveClick: () => void;
 }
 
-export default function Header({ onAdminClick, onReserveClick }: HeaderProps) {
+export default function Header({ onReserveClick }: HeaderProps) {
   return (
-    <div className="header shadow-sm">
+    <div className="header shadow-sm !px-4 sm:!px-8">
       <div className="flex items-center gap-3">
         <img 
           src="/logo.jpg" 
@@ -15,9 +14,6 @@ export default function Header({ onAdminClick, onReserveClick }: HeaderProps) {
         <span className="logo hidden sm:inline-block">D'Luigi Pizzaria</span>
       </div>
       <div className="header-actions">
-        <button className="nav-link" onClick={onAdminClick}>
-          Área restrita
-        </button>
         <button className="btn-reservar-nav" onClick={onReserveClick}>
           Reservar agora
         </button>
