@@ -1,31 +1,43 @@
 import { useState, useEffect } from 'react';
+import { supabase } from './supabase';
+import type { Session } from '@supabase/supabase-js';
 import Header from './components/Header';
 import Home from './components/Home';
 import SuccessScreen from './components/SuccessScreen';
 import AdminLogin from './components/AdminLogin';
-import AdminDashboard from './components/AdminDashboard';
+import CRMLayout from './crm/CRMLayout';
 import Footer from './components/Footer';
 
 type Screen = 'home' | 'success' | 'admin-login' | 'admin';
 
 function App() {
   const [screen, setScreen] = useState<Screen>('home');
+  const [session, setSession] = useState<Session | null>(null);
+  const [checkingAuth, setCheckingAuth] = useState(false);
+
+  const isAdminRoute = window.location.pathname === '/admin';
+
   useEffect(() => {
-    if (window.location.pathname === '/admin') {
-      setScreen('admin');
-    } else {
-      checkAuth();
-    }
+    if (!isAdminRoute) return;
+
+    setCheckingAuth(true);
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setScreen(session ? 'admin' : 'admin-login');
+      setCheckingAuth(false);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      if (session) {
+        setScreen('admin');
+      } else if (isAdminRoute) {
+        setScreen('admin-login');
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
-
-  const checkAuth = () => {
-    const auth = localStorage.getItem('admin_auth') === 'true';
-    if (auth && screen === 'admin-login') {
-      setScreen('admin');
-    }
-  };
-
-  // onAdminClick is removed as requested
 
   const handleReserveClick = () => {
     if (screen !== 'home') {
@@ -46,13 +58,19 @@ function App() {
     window.scrollTo(0, 0);
   };
 
-  const handleAdminLoginSuccess = () => {
-    setScreen('admin');
-  };
+  if (isAdminRoute && checkingAuth) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', background: 'var(--cream)' }}>
+        <p style={{ color: 'var(--muted)', fontFamily: "'DM Sans',sans-serif" }}>Verificando acesso...</p>
+      </div>
+    );
+  }
 
   return (
     <>
-      <Header onReserveClick={handleReserveClick} />
+      {screen !== 'admin' && screen !== 'admin-login' && (
+        <Header onReserveClick={handleReserveClick} />
+      )}
       {screen === 'home' && <Home onSuccess={handleSuccess} />}
       {screen === 'success' && (
         <>
@@ -60,8 +78,8 @@ function App() {
           <Footer />
         </>
       )}
-      {screen === 'admin-login' && <AdminLogin onSuccess={handleAdminLoginSuccess} />}
-      {screen === 'admin' && <AdminDashboard />}
+      {screen === 'admin-login' && <AdminLogin />}
+      {screen === 'admin' && <CRMLayout session={session} />}
     </>
   );
 }

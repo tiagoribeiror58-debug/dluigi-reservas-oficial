@@ -71,11 +71,18 @@ export default function Home({ onSuccess }: HomeProps) {
 
     const period = detectPeriod(form.time);
     const reservation = {
-      ...form,
+      name: form.name,
+      phone: form.phone,
+      date: form.date,
+      time: form.time,
+      guests: parseInt(form.guests),
+      event_type: form.eventType,
+      buffet: form.buffet,
+      birthday: form.birthday,
+      notes: form.notes,
       period,
       status: 'pendente',
       package_id: selectedPackage || '',
-      guests: parseInt(form.guests),
     };
 
     const { error } = await supabase.from('reservations').insert([reservation]);

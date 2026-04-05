@@ -46,22 +46,10 @@ CREATE TABLE IF NOT EXISTS reservations (
 
 ALTER TABLE reservations ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Anyone can create reservations"
+CREATE POLICY "Permitir todas as operacoes anonimamente (uso local auth)"
   ON reservations
-  FOR INSERT
+  FOR ALL
   TO anon
-  WITH CHECK (true);
-
-CREATE POLICY "Authenticated users can view all reservations"
-  ON reservations
-  FOR SELECT
-  TO authenticated
-  USING (true);
-
-CREATE POLICY "Authenticated users can update reservations"
-  ON reservations
-  FOR UPDATE
-  TO authenticated
   USING (true)
   WITH CHECK (true);
 

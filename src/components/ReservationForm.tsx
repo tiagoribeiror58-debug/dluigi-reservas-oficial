@@ -32,7 +32,7 @@ export default function ReservationForm({
 
       {selectedPkg && (
         <div className="form-pkg-active">
-          {selectedPkg.emoji} Pacote selecionado: <strong>{selectedPkg.title}</strong>
+          Pacote selecionado: <strong>{selectedPkg.title}</strong>
         </div>
       )}
 

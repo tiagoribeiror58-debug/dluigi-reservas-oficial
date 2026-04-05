@@ -70,4 +70,4 @@ export const EVENT_TYPES = [
   'Outro',
 ];
 
-export const ADMIN_PASSWORD = 'dluigi2026';
+

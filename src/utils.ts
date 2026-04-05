@@ -27,7 +27,10 @@ export function getMinDate(guests: string): string {
   const date = new Date();
   const guestCount = parseInt(guests) || 0;
   date.setDate(date.getDate() + (guestCount > 20 ? 2 : 1));
-  return date.toISOString().split('T')[0];
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
 }
 
 export function detectPeriod(time: string): string {
@@ -85,4 +88,20 @@ export function validateForm(form: Reservation, blockedDates: string[]): FormErr
 export function formatDate(dateString: string): string {
   const date = new Date(dateString + 'T12:00');
   return date.toLocaleDateString('pt-BR');
+}
+
+export function daysUntil(dateString: string): number {
+  const target = new Date(dateString + 'T12:00');
+  const today = new Date();
+  today.setHours(12, 0, 0, 0);
+  const diffTime = target.getTime() - today.getTime();
+  return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+}
+
+export function formatWhatsAppNumber(phone: string): string {
+  const cleaned = phone.replace(/\D/g, '');
+  if (cleaned.length === 10 || cleaned.length === 11) {
+    return `55${cleaned}`;
+  }
+  return cleaned;
 }

@@ -29,6 +29,7 @@ export interface Reservation {
   period?: string;
   status?: string;
   package_id?: string;
+  admin_notes?: string;
   created_at?: string;
   updated_at?: string;
 }
@@ -43,5 +44,7 @@ export interface FormErrors {
   buffet?: string;
 }
 
-export type ReservationStatus = 'pendente' | 'confirmada' | 'cancelada';
-export type FilterType = 'all' | ReservationStatus;
+export type CRMStage = 'novo' | 'em_contato' | 'negociando' | 'fechado' | 'perdido';
+export type ReservationStatus = CRMStage;
+export type FilterType = 'all' | CRMStage;
+export type CRMView = 'dashboard' | 'pipeline' | 'leads' | 'templates' | 'produtos' | 'ajuda';
