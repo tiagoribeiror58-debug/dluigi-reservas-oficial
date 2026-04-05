@@ -14,6 +14,8 @@ export default function CRMLeadModal({ lead, onClose, onUpdateStatus, onUpdateNo
   const [activeTab, setActiveTab] = useState<'mensagens' | 'notas'>('mensagens');
   const [notes, setNotes] = useState(lead.admin_notes || '');
   const [message, setMessage] = useState('');
+  const [saveIndicator, setSaveIndicator] = useState(false);
+  const [copyPhoneIndicator, setCopyPhoneIndicator] = useState(false);
   
   const wa = formatWhatsAppNumber(lead.phone);
 
@@ -27,7 +29,18 @@ export default function CRMLeadModal({ lead, onClose, onUpdateStatus, onUpdateNo
     }
   };
 
-  const handleCopy = () => {
+  const copyPhoneOnly = () => {
+    navigator.clipboard.writeText(lead.phone);
+    setCopyPhoneIndicator(true);
+    setTimeout(() => setCopyPhoneIndicator(false), 2000);
+  };
+
+  const handleCopyTextOnly = () => {
+    navigator.clipboard.writeText(message);
+    alert('Mensagem copiada para a área de transferência!');
+  };
+
+  const handleOpenWA = () => {
     navigator.clipboard.writeText(message);
     const link = `https://wa.me/${wa}?text=${encodeURIComponent(message)}`;
     window.open(link, '_blank');
@@ -36,88 +49,136 @@ export default function CRMLeadModal({ lead, onClose, onUpdateStatus, onUpdateNo
   const handleSaveNotes = () => {
     if (notes !== lead.admin_notes) {
       onUpdateNotes(lead.id!, notes);
+      setSaveIndicator(true);
+      setTimeout(() => setSaveIndicator(false), 2000);
     }
   };
 
   return (
     <div className="crm-modal-overlay">
       <div className="crm-modal">
-        <div className="crm-modal-header">
-          <div>
-            <h2 style={{ fontSize: '20px', color: '#FFF' }}>{lead.name}</h2>
-            <div style={{ display: 'flex', gap: '12px', marginTop: '6px', fontSize: '13px', color: '#888' }}>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><MessageCircle size={14}/> {lead.phone}</span>
-              <span>📅 {new Date(lead.date+'T12:00').toLocaleDateString('pt-BR')} às {lead.time}</span>
-              <span>👥 {lead.guests} pax</span>
-              <span>🍕 {lead.buffet}</span>
+        <div className="crm-modal-header" style={{ padding: '24px 24px 16px 24px' }}>
+          <div style={{ flex: 1 }}>
+            <h2 style={{ fontSize: '22px', color: '#FFF', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              {lead.name}
+            </h2>
+            
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginTop: '16px', fontSize: '13px', color: '#A0A0A0' }}>
+              
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#121212', padding: '6px 12px', borderRadius: '6px', border: '1px solid #2A2A2A' }}>
+                <MessageCircle size={16} color="#60A5FA" /> 
+                <span>{lead.phone}</span>
+                <button 
+                  onClick={copyPhoneOnly}
+                  style={{ marginLeft: 'auto', background: 'none', border: 'none', color: '#FBBF24', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', fontWeight: 600 }}
+                  title="Copiar número para Desktop WhatsApp"
+                >
+                  <Copy size={12} /> {copyPhoneIndicator ? 'Copiado!' : 'Copiar'}
+                </button>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#121212', padding: '6px 12px', borderRadius: '6px', border: '1px solid #2A2A2A' }}>
+                <span>📅</span> 
+                <span>{new Date(lead.date+'T12:00').toLocaleDateString('pt-BR')} às {lead.time}</span>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#121212', padding: '6px 12px', borderRadius: '6px', border: '1px solid #2A2A2A' }}>
+                <span>👥</span> 
+                <span>{lead.guests} pessoas</span>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#121212', padding: '6px 12px', borderRadius: '6px', border: '1px solid #2A2A2A' }}>
+                <span>🍕</span> 
+                <span title={lead.buffet} style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{lead.buffet}</span>
+              </div>
+
             </div>
           </div>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#888', cursor: 'pointer' }}><X size={24} /></button>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#888', cursor: 'pointer', padding: '4px' }}><X size={24} /></button>
         </div>
 
-        <div className="crm-modal-body">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px' }}>
-            <span style={{ color: '#888', fontSize: '14px' }}>Mudar status:</span>
+        <div className="crm-modal-body" style={{ paddingTop: '8px' }}>
+          
+          {/* Status Bar */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#242424', padding: '12px 16px', borderRadius: '8px', marginBottom: '24px' }}>
+            <span style={{ color: '#E0E0E0', fontSize: '14px', fontWeight: 600 }}>Status do Lead:</span>
             <select 
               value={lead.status} 
               onChange={(e) => onUpdateStatus(lead.id!, e.target.value as CRMStage)}
-              style={{ background: '#121212', color: '#FFF', border: '1px solid #2A2A2A', padding: '8px 12px', borderRadius: '6px', outline: 'none' }}
+              style={{ background: '#121212', color: '#FFF', border: '1px solid #333', padding: '8px 16px', borderRadius: '6px', outline: 'none', fontWeight: 600, cursor: 'pointer' }}
             >
-              <option value="novo">Novo</option>
-              <option value="em_contato">Em Contato</option>
-              <option value="negociando">Negociando</option>
-              <option value="fechado">Fechado</option>
-              <option value="perdido">Perdido</option>
+              <option value="novo">🟡 Novo</option>
+              <option value="em_contato">🔵 Em Contato</option>
+              <option value="negociando">🟠 Negociando</option>
+              <option value="fechado">🟢 Fechado / Confirmado</option>
+              <option value="perdido">🔴 Perdido / Cancelado</option>
             </select>
           </div>
 
+          {/* Core Tabs */}
           <div style={{ display: 'flex', gap: '16px', borderBottom: '1px solid #2A2A2A', marginBottom: '20px' }}>
-            <button className={`tab-btn ${activeTab === 'mensagens' ? 'active' : ''}`} onClick={() => setActiveTab('mensagens')}>Mensagens</button>
-            <button className={`tab-btn ${activeTab === 'notas' ? 'active' : ''}`} onClick={() => setActiveTab('notas')}>Notas / Contexto</button>
+            <button className={`tab-btn ${activeTab === 'mensagens' ? 'active' : ''}`} onClick={() => setActiveTab('mensagens')}>📬 Mensagens Prontas</button>
+            <button className={`tab-btn ${activeTab === 'notas' ? 'active' : ''}`} onClick={() => setActiveTab('notas')}>📝 Notas / Contexto</button>
           </div>
 
+          {/* MSG Tab */}
           {activeTab === 'mensagens' && (
             <div>
               <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
                 <button className="template-btn" onClick={() => setMessage(getTemplate('contato1'))}>Primeiro Contato</button>
                 <button className="template-btn" onClick={() => setMessage(getTemplate('followup'))}>Follow-up</button>
-                <button className="template-btn" onClick={() => setMessage(getTemplate('proposta'))}>Envio de Proposta</button>
-                <button className="template-btn" onClick={() => setMessage(getTemplate('fechamento'))}>Fechamento</button>
+                <button className="template-btn" onClick={() => setMessage(getTemplate('proposta'))}>Proposta</button>
+                <button className="template-btn" onClick={() => setMessage(getTemplate('fechamento'))}>Confirmar</button>
               </div>
 
               <textarea 
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                placeholder="Selecione um template acima ou digite sua mensagem..."
-                style={{ width: '100%', height: '180px', background: '#121212', border: '1px solid #2A2A2A', borderRadius: '8px', padding: '16px', color: '#FFF', resize: 'none', fontFamily: "'DM Sans',sans-serif", fontSize: '14px' }}
+                placeholder="Selecione um template acima ou digite sua resposta aqui..."
+                style={{ width: '100%', height: '160px', background: '#1A1A1A', border: '1px solid #333', borderRadius: '8px', padding: '16px', color: '#FFF', resize: 'none', fontFamily: "'DM Sans',sans-serif", fontSize: '14px' }}
               />
 
-              <button 
-                onClick={handleCopy}
-                disabled={!message}
-                style={{ width: '100%', padding: '14px', background: '#FBBF24', color: '#1A0A0A', border: 'none', borderRadius: '8px', fontWeight: 700, fontSize: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: message ? 'pointer' : 'not-allowed', marginTop: '16px', opacity: message ? 1 : 0.5 }}
-              >
-                <Copy size={18} /> Copiar e Abrir WhatsApp
-              </button>
+              <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
+                <button 
+                  onClick={handleCopyTextOnly}
+                  disabled={!message}
+                  style={{ flex: 1, padding: '14px', background: '#2A2A2A', color: '#FFF', border: '1px solid #444', borderRadius: '8px', fontWeight: 600, fontSize: '14px', cursor: message ? 'pointer' : 'not-allowed', opacity: message ? 1 : 0.5 }}
+                >
+                  Apenas Copiar Texto
+                </button>
+
+                <button 
+                  onClick={handleOpenWA}
+                  disabled={!message}
+                  style={{ flex: 2, padding: '14px', background: '#FBBF24', color: '#1A0A0A', border: 'none', borderRadius: '8px', fontWeight: 700, fontSize: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: message ? 'pointer' : 'not-allowed', opacity: message ? 1 : 0.5 }}
+                >
+                  <Copy size={18} /> Copiar e Abrir WhatsApp
+                </button>
+              </div>
             </div>
           )}
 
+          {/* NOTES Tab */}
           {activeTab === 'notas' && (
             <div>
               {lead.notes && (
                 <div style={{ background: '#121212', padding: '16px', borderRadius: '8px', marginBottom: '16px', borderLeft: '3px solid #8B0000' }}>
-                  <span style={{ fontSize: '11px', color: '#888', textTransform: 'uppercase', marginBottom: '4px', display: 'block' }}>Cliente escreveu na reserva:</span>
+                  <span style={{ fontSize: '11px', color: '#888', textTransform: 'uppercase', marginBottom: '4px', display: 'block' }}>Cliente enviou no formulário:</span>
                   <p style={{ color: '#E0E0E0', fontSize: '14px', fontStyle: 'italic' }}>"{lead.notes}"</p>
                 </div>
               )}
               
-              <span style={{ fontSize: '12px', color: '#888', marginBottom: '8px', display: 'block' }}>Anotações Administrativas (Salva automaticamente ao sair do campo)</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <span style={{ fontSize: '13px', color: '#A0A0A0', fontWeight: 600 }}>Anotações da Administração</span>
+                {saveIndicator && <span style={{ fontSize: '11px', color: '#10B981', fontWeight: 600 }}>✅ Salvo</span>}
+              </div>
+              
               <textarea 
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 onBlur={handleSaveNotes}
-                placeholder="Exemplo: Cliente pediu para juntar mesas..."
-                style={{ width: '100%', height: '180px', background: '#121212', border: '1px solid #2A2A2A', borderRadius: '8px', padding: '16px', color: '#FFF', resize: 'none', fontFamily: "'DM Sans',sans-serif", fontSize: '14px' }}
+                placeholder="Exemplo: Falei com ela e pediu para ligar mais tarde... (Salva automático ao sair da caixa)"
+                style={{ width: '100%', height: '180px', background: '#121212', border: '1px solid #333', borderRadius: '8px', padding: '16px', color: '#FFF', resize: 'none', fontFamily: "'DM Sans',sans-serif", fontSize: '14px' }}
               />
             </div>
           )}
