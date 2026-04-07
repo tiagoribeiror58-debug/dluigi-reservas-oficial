@@ -10,13 +10,8 @@ const PHOTOS = [
   '/imagens-dluigi/WhatsApp Image 2026-04-06 at 14.13.10.jpeg',
   '/imagens-dluigi/WhatsApp Image 2026-04-06 at 14.13.51 (1).jpeg',
   '/imagens-dluigi/WhatsApp Image 2026-04-06 at 14.13.51 (2).jpeg',
-  '/imagens-dluigi/WhatsApp Image 2026-04-06 at 14.13.51.jpeg',
   '/imagens-dluigi/WhatsApp Image 2026-04-06 at 14.14.01 (1).jpeg',
-  '/imagens-dluigi/WhatsApp Image 2026-04-06 at 14.14.01.jpeg',
   '/imagens-dluigi/WhatsApp Image 2026-04-06 at 14.16.10 (1).jpeg',
-  '/imagens-dluigi/WhatsApp Image 2026-04-06 at 14.16.10.jpeg',
-  '/imagens-dluigi/WhatsApp Image 2026-04-06 at 14.16.11 (1).jpeg',
-  '/imagens-dluigi/WhatsApp Image 2026-04-06 at 14.16.11 (2).jpeg',
   '/imagens-dluigi/WhatsApp Image 2026-04-06 at 14.16.11 (3).jpeg',
   '/imagens-dluigi/WhatsApp Image 2026-04-06 at 14.16.11 (4).jpeg',
   '/imagens-dluigi/WhatsApp Image 2026-04-06 at 14.16.11.jpeg'

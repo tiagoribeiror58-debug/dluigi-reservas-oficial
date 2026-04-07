@@ -12,7 +12,9 @@ export default function PackageCard({ package: pkg, isSelected, onSelect }: Pack
     <div
       className={`pkg-card ${isSelected ? 'selected' : ''}`}
       onClick={onSelect}
-      style={{ background: isSelected ? pkg.color : '#fff' }}
+      style={{
+        position: 'relative'
+      }}
     >
       <div
         className="pkg-img-placeholder"

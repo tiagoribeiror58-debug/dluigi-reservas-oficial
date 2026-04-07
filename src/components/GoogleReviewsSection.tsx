@@ -55,24 +55,24 @@ export default function GoogleReviewsSection() {
             display: 'inline-flex',
             alignItems: 'center',
             gap: '8px',
-            border: '2px solid #D97706',
-            color: '#D97706',
+            border: '2px solid var(--red)',
+            color: 'var(--red)',
             padding: '12px 24px',
             borderRadius: '30px',
             fontSize: '15px',
-            fontWeight: '700',
-            fontFamily: "'DM Sans', sans-serif",
+            fontWeight: '600',
+            fontFamily: "'Inter', sans-serif",
             textDecoration: 'none',
             transition: 'all 0.3s ease',
             backgroundColor: 'transparent'
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = '#D97706';
+            e.currentTarget.style.backgroundColor = 'var(--red)';
             e.currentTarget.style.color = '#fff';
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.backgroundColor = 'transparent';
-            e.currentTarget.style.color = '#D97706';
+            e.currentTarget.style.color = 'var(--red)';
           }}
         >
           Ver todas as avaliações no Google
