@@ -9,6 +9,7 @@ import PhotoGallery from './PhotoGallery';
 import PackagesSection from './PackagesSection';
 import ReservationForm from './ReservationForm';
 import Footer from './Footer';
+import GoogleReviewsSection from './GoogleReviewsSection';
 
 interface HomeProps {
   onSuccess: () => void;
@@ -111,10 +112,10 @@ export default function Home({ onSuccess }: HomeProps) {
         subtitle="Assista aos nossos vídeos e sinta a atmosfera perfeita para a sua família"
         videos={[
           { id: '1', url: '/videos/video1.mp4', title: 'Espaço Amplo e Kids' },
-          { id: '2', url: '/videos/video2.mp4', title: 'D\'Luigi Pizzaria' }
+          { id: '2', url: '/videos/video2.mp4', title: 'D\'Luigi Pizzaria' },
+          { id: '5', url: '/videos/VIDEO 5.MP4', title: 'Uma Noite Especial' }
         ]}
       />
-      <PhotoGallery />
       <div className="divider my-8">
         <hr />
       </div>
@@ -131,6 +132,14 @@ export default function Home({ onSuccess }: HomeProps) {
       </div>
       <PackagesSection selectedPackage={selectedPackage} onSelectPackage={handlePackageSelect} />
       <div className="divider">
+        <hr />
+      </div>
+      <PhotoGallery />
+      <div className="divider my-6">
+        <hr />
+      </div>
+      <GoogleReviewsSection />
+      <div className="divider my-6">
         <hr />
       </div>
       <ReservationForm

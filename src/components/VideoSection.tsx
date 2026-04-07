@@ -30,11 +30,11 @@ export default function VideoSection({ title, subtitle, videos }: VideoSectionPr
         <p className="section-sub">{subtitle}</p>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+      <div className="flex flex-wrap justify-center gap-6 max-w-5xl mx-auto">
         {videos.map((video) => (
           <div 
             key={video.id} 
-            className="relative aspect-[9/16] md:aspect-[3/4] rounded-2xl overflow-hidden cursor-pointer group shadow-xl bg-black flex items-center justify-center border-2 border-[var(--border)] hover:border-[var(--red)] transition-all duration-300 transform hover:-translate-y-1"
+            className="w-full sm:w-[320px] max-w-[360px] relative aspect-[9/16] md:aspect-[3/4] rounded-2xl overflow-hidden cursor-pointer group shadow-xl bg-black flex flex-col items-center justify-center border-2 border-[var(--border)] hover:border-[var(--red)] transition-all duration-300 transform hover:-translate-y-1"
             onClick={() => setActiveVideo(video)}
           >
             <video 
