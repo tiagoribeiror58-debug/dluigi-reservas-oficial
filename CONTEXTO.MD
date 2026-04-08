@@ -139,6 +139,8 @@ Landing com pacotes visuais → Formulário pré-preenchido → Confirmação ma
 - [x]  Seção de vídeos com player fullscreen e controle de velocidade
 - [x]  Seção de Avaliações Google com CTA linkado
 - [x]  Refatoração UI/UX (Apple-style: Inter, glassmorphism, header flutuante)
+- [x]  CRMAjuda reescrito — accordion interativo com 6 categorias e conteúdo real do sistema
+- [x]  Script SQL consolidado (`supabase/setup_completo.sql`) — cria tabelas + seed dos 4 pacotes
 - [ ]  Notificação automática pro José
 - [ ]  Valor da taxa diurna
 - [ ]  Imagens de avaliações Google (pasta `public/imagens-avaliações-dluigi` está vazia)
@@ -193,7 +195,7 @@ Decisão: não separar em duas telas. Pacotes visuais no topo pré-preenchem o f
 
 ---
 
-# Estratégia de Pacotes (Definida em 08/04/26) - FEATURE PARA IMPLEMENTAR:
+# Estratégia de Pacotes (Definida em 08/04/26) - FEATURE IMPLEMENTADA ✅:
 
 Segue o fluxo fechado, sem variações, já otimizado para KISS e conversão.
 
@@ -481,3 +483,17 @@ Simplicidade → reduz esforço
 Percepção → justifica gastar mais
 
 👉 Os três juntos = mais conversão + maior ticket"
+
+---
+
+# Atualizações (08/04/26) - Auditoria de UX (Tela Pública)
+
+Foram implementados ajustes pontuais de UX na tela pública, identificados após a auditoria:
+- **Telefone Clicável (Footer):** Adicionado link `tel:` ao número do rodapé para que usuários (especialmente em mobile) possam iniciar chamadas facilmente num único clique. Focado na otimização da conversão final.
+- **Limpeza no Player de Vídeo:** Removidos os controles de velocidade (1x, 1.5x, 2x) do modal de vídeo. Entendemos que num vídeo de marketing emocional (KISS), botões de edição poluem a interface desnecessariamente.
+- **Referencial na Galeria de Fotos:** Incluído um contador de posição elegante dentro do Lightbox de fotos (ex: `1 / 13`). Isso orienta os usuários em relação ao volume de imagens disponíveis e aumenta o estímulo de avanço dentro do carrossel.
+
+## UI/UX Refatoração no Módulo Admin (CRM)
+- **Eliminação de Emojis:** Todos os emojis genéricos (`🟡`, `📅`, `👥`, `🍕`, `🎁`) do Pipeline, Modal e Listagem foram substituídos pelo set corporativo e elegante da **Lucide React**, vetorizando a interface administrativa.
+- **Dark Mode Premium:** O contraste agressivo (amarelos contra fundos puros `#000`) foi remodelado para a paleta Apple macOS Style (`#0C0C0C`, e bordas transparentes `#222`).  
+- **Salvar Notas:** Um botão explícito `Salvar Anotações` foi instalado na aba Contexto, abandonando o arriscado `onBlur` (que podia causar ansiedade no operador de não saber se salvou). O modal agora possui feed de `✅ Salvo com sucesso`.

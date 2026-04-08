@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import { supabase } from './supabase';
+import { supabase } from '@/integrations/supabase/client';
 import type { Session } from '@supabase/supabase-js';
-import Header from './components/Header';
-import Home from './components/Home';
-import SuccessScreen from './components/SuccessScreen';
-import AdminLogin from './components/AdminLogin';
-import CRMLayout from './crm/CRMLayout';
-import Footer from './components/Footer';
+import Header from '@/components/layout/Header';
+import Home from '@/pages/Index';
+import SuccessScreen from '@/components/landing/SuccessScreen';
+import AdminLogin from '@/pages/AdminLogin';
+import CRMLayout from '@/components/crm/CRMLayout';
+import Footer from '@/components/layout/Footer';
 
 type Screen = 'home' | 'success' | 'admin-login' | 'admin';
 
