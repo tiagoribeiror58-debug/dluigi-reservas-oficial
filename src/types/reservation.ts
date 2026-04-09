@@ -14,6 +14,13 @@ export interface Package {
   created_at?: string;
 }
 
+export interface AdminNote {
+  id: string;
+  text: string;
+  created_at: string;
+  author: string;
+}
+
 export interface BuffetOption {
   value: string;
   label: string;
@@ -34,7 +41,7 @@ export interface Reservation {
   period?: string;
   status?: string;
   package_id?: string;
-  admin_notes?: string;
+  admin_notes?: AdminNote[] | any; // Backwards compatible parsing
   created_at?: string;
   updated_at?: string;
 }

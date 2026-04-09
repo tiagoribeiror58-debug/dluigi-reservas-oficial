@@ -131,9 +131,12 @@ export default function CRMPipeline({ leads, packages, onUpdateStatus, onUpdateN
           onClose={() => setSelectedLead(null)}
           onUpdateStatus={(id, status) => {
             onUpdateStatus(id, status);
-            setSelectedLead(null); 
+            setSelectedLead(prev => prev ? { ...prev, status } : null); 
           }}
-          onUpdateNotes={(id, notes) => onUpdateNotes(id, notes)} 
+          onUpdateNotes={(id, notes) => {
+            onUpdateNotes(id, notes);
+            setSelectedLead(prev => prev ? { ...prev, admin_notes: notes } : null);
+          }} 
         />
       )}
     </div>

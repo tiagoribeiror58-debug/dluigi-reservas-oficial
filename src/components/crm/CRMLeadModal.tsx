@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Reservation, CRMStage, Package } from "@/types/reservation";
+import { Reservation, CRMStage, Package, AdminNote } from "@/types/reservation";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -14,7 +14,7 @@ interface CRMLeadModalProps {
   packages: Package[];
   onClose: () => void;
   onUpdateStatus: (id: string, status: CRMStage) => void;
-  onUpdateNotes: (id: string, notes: string) => void;
+  onUpdateNotes: (id: string, notes: AdminNote[] | any) => void;
 }
 
 const STAGES: { id: CRMStage; label: string }[] = [
@@ -26,8 +26,11 @@ const STAGES: { id: CRMStage; label: string }[] = [
 ];
 
 export default function CRMLeadModal({ lead, packages, onClose, onUpdateStatus, onUpdateNotes }: CRMLeadModalProps) {
-  const [noteText, setNoteText] = useState(lead.admin_notes || "");
+  const [noteText, setNoteText] = useState("");
   const pkg = packages.find(p => p.title === lead.eventType);
+
+  // Garantir que as notas sempre venham como Array, já que a estrutura migrou para JSONB histórico
+  const existingNotes: AdminNote[] = Array.isArray(lead.admin_notes) ? lead.admin_notes : [];
 
   const copyPhone = () => {
     if (lead.phone) {
@@ -37,8 +40,22 @@ export default function CRMLeadModal({ lead, packages, onClose, onUpdateStatus, 
   };
 
   const handleSaveNotes = () => {
-    onUpdateNotes(lead.id!, noteText);
-    toast.success("Anotações salvas com sucesso!");
+    if (!noteText.trim()) {
+       toast.error("A anotação não pode ficar vazia.");
+       return;
+    }
+    
+    const newNote: AdminNote = {
+      id: crypto.randomUUID(),
+      text: noteText,
+      created_at: new Date().toISOString(),
+      author: "Admin"
+    };
+
+    const updatedNotes = [...existingNotes, newNote];
+    onUpdateNotes(lead.id!, updatedNotes);
+    setNoteText("");
+    toast.success("Nova anotação incluída no histórico do cliente!");
   };
 
   const handleStatusChange = (status: string) => {
@@ -120,17 +137,41 @@ export default function CRMLeadModal({ lead, packages, onClose, onUpdateStatus, 
             <TabsTrigger value="details" className="data-[state=active]:bg-[#222] data-[state=active]:text-white rounded-lg">Detalhes do Evento</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="context" className="space-y-3 mt-4">
-            <Textarea
-              placeholder="Descreva o contexto das negociações, objeções e informações ocultas do cliente..."
-              value={noteText}
-              onChange={(e) => setNoteText(e.target.value)}
-              className="bg-[#0C0C0C] border-[#333] text-white min-h-[120px] focus-visible:ring-[#FF5A5A]"
-            />
-            <div className="flex justify-end">
-              <Button onClick={handleSaveNotes} size="sm" className="bg-[#FF5A5A] hover:bg-[#8F1A1A] text-white">
-                Salvar Anotações
-              </Button>
+          <TabsContent value="context" className="space-y-4 mt-4">
+            {/* Lista do Hiśtorico */}
+            <div className="space-y-3 max-h-[220px] overflow-y-auto pr-2 crm-custom-scrollbar mb-2">
+              {existingNotes.length === 0 ? (
+                <div className="text-center py-6 text-[#555] text-sm border border-dashed border-[#222] rounded-xl bg-[#0C0C0C]">
+                  Nenhuma anotação neste cliente ainda.
+                </div>
+              ) : (
+                existingNotes.map((note) => (
+                  <div key={note.id} className="bg-[#151515] p-3 rounded-lg border border-[#2A2A2A]">
+                    <div className="flex items-center justify-between mb-2">
+                       <span className="text-xs font-semibold text-[#888]">{note.author}</span>
+                       <span className="text-[10px] text-[#555]">
+                         {new Date(note.created_at).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })}
+                       </span>
+                    </div>
+                    <p className="text-sm text-[#E2E2E2] whitespace-pre-wrap">{note.text}</p>
+                  </div>
+                ))
+              )}
+            </div>
+
+            {/* Input Nova Nota */}
+            <div className="relative">
+              <Textarea
+                placeholder="Adicionar nova anotação de fechamento, ligações ou orçamento..."
+                value={noteText}
+                onChange={(e) => setNoteText(e.target.value)}
+                className="!bg-[#0C0C0C] !border-[#333] !text-white min-h-[80px] focus-visible:!ring-[#FF5A5A] resize-y placeholder:text-[#555] pb-10"
+              />
+              <div className="absolute bottom-2 right-2 flex justify-end">
+                <Button onClick={handleSaveNotes} size="sm" className="bg-[#FF5A5A] hover:bg-[#8F1A1A] text-white text-xs h-7">
+                  Adicionar Anotação
+                </Button>
+              </div>
             </div>
           </TabsContent>
 

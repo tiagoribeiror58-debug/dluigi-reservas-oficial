@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Package, Reservation, CRMStage } from '@/types/reservation';
 import CRMLeadModal from './CRMLeadModal';
-import { Search, Gift } from 'lucide-react';
+import { Search, Gift, FilterX, ChevronDown } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface CRMLeadsProps {
   leads: Reservation[];
@@ -88,103 +89,118 @@ export default function CRMLeads({ leads, packages, onUpdateStatus, onUpdateNote
   };
 
   return (
-    <div className="crm-fade-in" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <div className="crm-dash-header" style={{ marginBottom: '24px' }}>
-        <h2 className="view-title">Leads</h2>
-        <p className="view-sub">{leads.length} leads cadastrados</p>
+    <div className="crm-fade-in flex flex-col h-full animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="flex flex-col gap-1 mb-6">
+        <h2 className="text-3xl font-bold tracking-tight text-white">Leads</h2>
+        <p className="text-[#888] font-medium">{leads.length} leads cadastrados no pipeline</p>
       </div>
 
-      <div style={{ display: 'flex', gap: '16px', marginBottom: '24px' }}>
-        <select 
-          style={{ background: '#0C0C0C', color: '#FFF', border: '1px solid #222', padding: '10px 16px', borderRadius: '8px', outline: 'none', fontFamily: 'Inter', fontSize: '14px' }}
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-        >
-          <option value="Todos">Todos Status</option>
-          <option value="novo">Novo</option>
-          <option value="em_contato">Em Contato</option>
-          <option value="negociando">Negociando</option>
-          <option value="fechado">Fechado</option>
-          <option value="perdido">Perdido</option>
-        </select>
+      <div className="flex flex-col md:flex-row gap-4 mb-6 bg-[#0C0C0C] p-4 rounded-xl border border-[#222]">
+        <div className="w-[180px]">
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+             <SelectTrigger className="w-full bg-[#1A1A1A] border-[#333] text-white">
+               <SelectValue placeholder="Status" />
+             </SelectTrigger>
+             <SelectContent className="bg-[#1A1A1A] border-[#333] text-white">
+                <SelectItem value="Todos">Todos Status</SelectItem>
+                <SelectItem value="novo">Novo</SelectItem>
+                <SelectItem value="em_contato">Em Contato</SelectItem>
+                <SelectItem value="negociando">Negociando</SelectItem>
+                <SelectItem value="fechado">Fechado</SelectItem>
+                <SelectItem value="perdido">Perdido</SelectItem>
+             </SelectContent>
+          </Select>
+        </div>
         
-        <select 
-          value={datePreset}
-          onChange={(e) => setDatePreset(e.target.value)}
-          style={{ background: '#0C0C0C', color: '#FFF', border: '1px solid #222', padding: '10px 16px', borderRadius: '8px', outline: 'none', fontFamily: 'Inter', fontSize: '14px' }}
-        >
-          <option value="Todos">📅 Qualquer Data</option>
-          <option value="Hoje">Hoje</option>
-          <option value="Amanhã">Amanhã</option>
-          <option value="Proximos7">Próximos 7 dias</option>
-          <option value="EsteMes">Este Mês</option>
-          <option value="Personalizado">Personalizado...</option>
-        </select>
+        <div className="w-[200px]">
+          <Select value={datePreset} onValueChange={setDatePreset}>
+             <SelectTrigger className="w-full bg-[#1A1A1A] border-[#333] text-white">
+               <SelectValue placeholder="Período" />
+             </SelectTrigger>
+             <SelectContent className="bg-[#1A1A1A] border-[#333] text-white">
+                <SelectItem value="Todos">📅 Qualquer Data</SelectItem>
+                <SelectItem value="Hoje">Hoje</SelectItem>
+                <SelectItem value="Amanhã">Amanhã</SelectItem>
+                <SelectItem value="Proximos7">Próximos 7 dias</SelectItem>
+                <SelectItem value="EsteMes">Este Mês</SelectItem>
+                <SelectItem value="Personalizado">Personalizado...</SelectItem>
+             </SelectContent>
+          </Select>
+        </div>
 
         {datePreset === 'Personalizado' && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div className="flex items-center gap-2 animate-in slide-in-from-left-4">
             <input 
               type="date" 
               value={dateStart}
               onChange={(e) => setDateStart(e.target.value)}
-              style={{ background: '#0C0C0C', color: '#FFF', border: '1px solid #222', padding: '10px 12px', borderRadius: '8px', outline: 'none', fontFamily: 'Inter', fontSize: '13px', colorScheme: 'dark' }}
+              className="bg-[#1A1A1A] text-white border border-[#333] px-3 py-2 rounded-md outline-none text-sm transition-colors focus:border-[#FF5A5A] [color-scheme:dark]"
               title="Data inicial"
             />
-            <span style={{ color: '#888', fontSize: '13px' }}>até</span>
+            <span className="text-[#888] text-sm font-medium">até</span>
             <input 
               type="date" 
               value={dateEnd}
               onChange={(e) => setDateEnd(e.target.value)}
-              style={{ background: '#0C0C0C', color: '#FFF', border: '1px solid #222', padding: '10px 12px', borderRadius: '8px', outline: 'none', fontFamily: 'Inter', fontSize: '13px', colorScheme: 'dark' }}
+              className="bg-[#1A1A1A] text-white border border-[#333] px-3 py-2 rounded-md outline-none text-sm transition-colors focus:border-[#FF5A5A] [color-scheme:dark]"
               title="Data final"
             />
           </div>
         )}
 
-        <div style={{ position: 'relative', flex: 1, maxWidth: '400px' }}>
-          <Search size={16} color="#888" style={{ position: 'absolute', left: '16px', top: '12px' }} />
+        <div className="relative flex-1 max-w-md">
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#888]" />
           <input 
             type="text" 
             placeholder="Buscar por nome ou telefone..." 
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            style={{ width: '100%', background: '#0C0C0C', border: '1px solid #222', color: '#FFF', padding: '10px 16px 10px 42px', borderRadius: '8px', outline: 'none', fontFamily: 'Inter', fontSize: '14px' }}
+            className="w-full bg-[#1A1A1A] border border-[#333] text-white pl-9 pr-4 py-2 rounded-md outline-none text-sm focus:border-[#FF5A5A] transition-colors placeholder:text-[#555]"
           />
         </div>
       </div>
 
-      <div style={{ background: '#0C0C0C', border: '1px solid #222', borderRadius: '12px', overflow: 'hidden', flex: 1, boxShadow: '0 4px 12px rgba(0,0,0,0.2)' }}>
-        <div style={{ overflowY: 'auto', maxHeight: '100%' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '14px' }}>
-            <thead style={{ background: '#101010', position: 'sticky', top: 0, borderBottom: '1px solid #222' }}>
+      <div className="flex-1 bg-[#0C0C0C] border border-[#222] rounded-xl overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.12)]">
+        <div className="h-full overflow-y-auto crm-custom-scrollbar">
+          <table className="w-full text-left border-collapse text-sm">
+            <thead className="bg-[#151515] sticky top-0 z-10 shadow-sm border-b border-[#222]">
               <tr>
-                <th style={{ padding: '16px', color: '#888', fontWeight: 600 }}>Nome</th>
-                <th style={{ padding: '16px', color: '#888', fontWeight: 600 }}>Telefone</th>
-                <th style={{ padding: '16px', color: '#888', fontWeight: 600 }}>Data Evento</th>
-                <th style={{ padding: '16px', color: '#888', fontWeight: 600 }}>Cardápio</th>
-                <th style={{ padding: '16px', color: '#888', fontWeight: 600 }}>Status</th>
+                <th className="px-6 py-4 text-[#888] font-semibold">Nome Principal</th>
+                <th className="px-6 py-4 text-[#888] font-semibold">Contato</th>
+                <th className="px-6 py-4 text-[#888] font-semibold">Data do Evento</th>
+                <th className="px-6 py-4 text-[#888] font-semibold">Especificações</th>
+                <th className="px-6 py-4 text-[#888] font-semibold text-right">Status do Deal</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-[#1A1A1A]">
               {display.map(lead => (
                 <tr 
                   key={lead.id} 
                   onClick={() => setSelectedLead(lead)}
-                  style={{ borderBottom: '1px solid #1A1A1A', cursor: 'pointer', transition: 'background 0.2s' }}
-                  onMouseOver={(e) => e.currentTarget.style.background = '#141414'}
-                  onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
+                  className="group cursor-pointer hover:bg-[#151515] transition-colors"
                 >
-                  <td style={{ padding: '16px', color: '#FFF', fontWeight: 500 }}>{lead.name}</td>
-                  <td style={{ padding: '16px', color: '#A0A0A0' }}>{lead.phone}</td>
-                  <td style={{ padding: '16px', color: '#A0A0A0' }}>{new Date(lead.date+'T12:00').toLocaleDateString('pt-BR')}</td>
-                  <td style={{ padding: '16px', color: '#A0A0A0' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                      <span>{lead.buffet}</span>
-                      {lead.package_id && <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', color: '#FF5A5A', fontWeight: 600 }}><Gift size={12}/> {packages.find(p => p.id === lead.package_id)?.title || 'Pacote'}</span>}
+                  <td className="px-6 py-4 text-white font-medium group-hover:text-[#FF5A5A] transition-colors">{lead.name}</td>
+                  <td className="px-6 py-4 text-[#A0A0A0]">{lead.phone}</td>
+                  <td className="px-6 py-4 text-[#A0A0A0]">{new Date(lead.date+'T12:00').toLocaleDateString('pt-BR')}</td>
+                  <td className="px-6 py-4 text-[#A0A0A0]">
+                    <div className="flex flex-col gap-1">
+                      <span className="font-medium">{lead.buffet}</span>
+                      {lead.package_id && (
+                         <span className="flex items-center gap-1.5 text-[11px] text-[#FF5A5A] font-semibold font-mono tracking-tight bg-[#FF5A5A]/5 border border-[#FF5A5A]/10 px-2 py-0.5 rounded-full w-fit">
+                           <Gift size={12}/> {packages.find(p => p.id === lead.package_id)?.title || 'Pacote Especial'}
+                         </span>
+                      )}
                     </div>
                   </td>
-                  <td style={{ padding: '16px' }}>
-                    <span style={{ color: getStatusColor(lead.status), border: `1px solid ${getStatusColor(lead.status)}40`, background: `${getStatusColor(lead.status)}10`, padding: '4px 10px', borderRadius: '12px', fontSize: '11px', fontWeight: 700 }}>
+                  <td className="px-6 py-4 text-right">
+                    <span 
+                       className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold border"
+                       style={{ 
+                          color: getStatusColor(lead.status), 
+                          borderColor: `${getStatusColor(lead.status)}40`, 
+                          backgroundColor: `${getStatusColor(lead.status)}10` 
+                       }}
+                    >
                       {getStatusLabel(lead.status)}
                     </span>
                   </td>
@@ -192,8 +208,12 @@ export default function CRMLeads({ leads, packages, onUpdateStatus, onUpdateNote
               ))}
               {display.length === 0 && (
                 <tr>
-                  <td colSpan={5} style={{ padding: '40px', textAlign: 'center', color: '#666' }}>
-                    Nenhuma reserva encontrada para este filtro.
+                  <td colSpan={5} className="py-24 text-center">
+                    <div className="flex flex-col items-center justify-center text-[#555]">
+                      <FilterX size={48} className="mb-4 opacity-20" />
+                      <p className="text-base font-medium">Nenhum lead encontrado.</p>
+                      <p className="text-sm">Tente ajustar seus filtros para outra data ou status.</p>
+                    </div>
                   </td>
                 </tr>
               )}
@@ -207,8 +227,14 @@ export default function CRMLeads({ leads, packages, onUpdateStatus, onUpdateNote
           lead={selectedLead} 
           packages={packages}
           onClose={() => setSelectedLead(null)}
-          onUpdateStatus={onUpdateStatus}
-          onUpdateNotes={onUpdateNotes}
+          onUpdateStatus={(id, status) => {
+            onUpdateStatus(id, status);
+            setSelectedLead(prev => prev ? { ...prev, status } : null);
+          }}
+          onUpdateNotes={(id, notes) => {
+            onUpdateNotes(id, notes);
+            setSelectedLead(prev => prev ? { ...prev, admin_notes: notes } : null);
+          }}
         />
       )}
     </div>

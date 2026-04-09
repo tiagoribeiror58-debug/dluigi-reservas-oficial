@@ -19,6 +19,10 @@ export default function Home({ onSuccess }: HomeProps) {
   const [packages, setPackages] = useState<Package[]>([]);
   const [selectedPackage, setSelectedPackage] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [landingConfig, setLandingConfig] = useState({ 
+    title: 'Escolha o seu momento', 
+    subtitle: 'Selecione um pacote para pré-preencher a reserva automaticamente' 
+  });
 
   useEffect(() => {
     const fetchPkgs = async () => {
@@ -27,6 +31,14 @@ export default function Home({ onSuccess }: HomeProps) {
         setPackages(data as Package[]);
       } else {
         setPackages(PACKAGES);
+      }
+
+      const { data: settingsData } = await supabase.from('settings').select('value').eq('id', 'landing_packages').maybeSingle();
+      if (settingsData && settingsData.value) {
+        setLandingConfig({
+          title: settingsData.value.title || 'Escolha o seu momento',
+          subtitle: settingsData.value.subtitle || 'Selecione um pacote para pré-preencher a reserva automaticamente'
+        });
       }
     };
     fetchPkgs();
@@ -135,7 +147,13 @@ export default function Home({ onSuccess }: HomeProps) {
         <hr />
       </div>
 
-      <PackagesSection packages={packages} selectedPackage={selectedPackage} onSelectPackage={handlePackageSelect} />
+      <PackagesSection 
+        packages={packages} 
+        selectedPackage={selectedPackage} 
+        onSelectPackage={handlePackageSelect} 
+        title={landingConfig.title} 
+        subtitle={landingConfig.subtitle} 
+      />
       <div className="divider">
         <hr />
       </div>

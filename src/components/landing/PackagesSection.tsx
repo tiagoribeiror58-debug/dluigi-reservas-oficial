@@ -5,13 +5,15 @@ interface PackagesSectionProps {
   packages: Package[];
   selectedPackage: string | null;
   onSelectPackage: (id: string) => void;
+  title?: string;
+  subtitle?: string;
 }
 
-export default function PackagesSection({ packages, selectedPackage, onSelectPackage }: PackagesSectionProps) {
+export default function PackagesSection({ packages, selectedPackage, onSelectPackage, title = "Escolha o seu momento", subtitle = "Selecione um pacote para pré-preencher a reserva automaticamente" }: PackagesSectionProps) {
   return (
     <div className="section-packages">
-      <h2 className="section-title">Escolha o seu momento</h2>
-      <p className="section-sub">Selecione um pacote para pré-preencher a reserva automaticamente</p>
+      <h2 className="section-title">{title}</h2>
+      <p className="section-sub">{subtitle}</p>
       <div className="packages-grid">
         {packages.map((pkg) => (
           <PackageCard

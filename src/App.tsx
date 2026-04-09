@@ -7,6 +7,7 @@ import SuccessScreen from '@/components/landing/SuccessScreen';
 import AdminLogin from '@/pages/AdminLogin';
 import CRMLayout from '@/components/crm/CRMLayout';
 import Footer from '@/components/layout/Footer';
+import { Toaster } from 'sonner';
 
 type Screen = 'home' | 'success' | 'admin-login' | 'admin';
 
@@ -80,6 +81,7 @@ function App() {
       )}
       {screen === 'admin-login' && <AdminLogin />}
       {screen === 'admin' && <CRMLayout session={session} />}
+      <Toaster theme="dark" position="bottom-right" />
     </>
   );
 }

@@ -95,50 +95,77 @@ export default function CRMLayout({ session }: CRMLayoutProps) {
   };
 
   return (
-    <div className="crm-app">
+    <div className="dark flex h-screen w-screen bg-[#0A0A0A] text-[#EDEDED] font-sans antialiased overflow-hidden selection:bg-[#FF5A5A]/30">
       {/* Sidebar */}
-      <aside className="crm-sidebar">
-        <div className="crm-logo-area" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <img src="/logo.jpg" alt="D'Luigi Reservas" style={{ width: '120px', borderRadius: '8px' }} />
+      <aside className="w-[260px] bg-[#0C0C0C] border-r border-[#1A1A1A] flex flex-col relative z-20 shadow-xl shadow-black/50">
+        <div className="p-6 border-b border-[#1A1A1A] flex items-center justify-center">
+          <img src="/logo.jpg" alt="D'Luigi Reservas" className="w-[120px] rounded-xl shadow-md border border-[#222]" />
         </div>
         
-        <div className="crm-menu">
-          <span className="menu-group">MENU</span>
-          <button className={`menu-btn ${activeView === 'dashboard' ? 'active' : ''}`} onClick={() => setActiveView('dashboard')}>
-            <LayoutDashboard size={18} /> Dashboard
-          </button>
-          <button className={`menu-btn ${activeView === 'pipeline' ? 'active' : ''}`} onClick={() => setActiveView('pipeline')}>
-            <Columns size={18} /> Pipeline
-          </button>
-          <button className={`menu-btn ${activeView === 'leads' ? 'active' : ''}`} onClick={() => setActiveView('leads')}>
-            <Users size={18} /> Leads
-          </button>
-          <button className={`menu-btn ${activeView === 'pacotes' ? 'active' : ''}`} onClick={() => setActiveView('pacotes')}>
-            <PackageIcon size={18} /> Pacotes
-          </button>
-          <button className={`menu-btn ${activeView === 'ajuda' ? 'active' : ''}`} onClick={() => setActiveView('ajuda')}>
-            <HelpCircle size={18} /> Ajuda
+        <div className="flex-1 p-5 flex flex-col gap-1.5 overflow-y-auto">
+          <span className="text-[10px] font-bold text-[#555] uppercase tracking-[0.15em] mb-3 ml-2 mt-2">Menu Principal</span>
+          
+          {[
+            { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+            { id: 'pipeline', label: 'Pipeline Kanban', icon: Columns },
+            { id: 'leads', label: 'Gestão de Leads', icon: Users },
+            { id: 'pacotes', label: 'Gestão de Pacotes', icon: PackageIcon },
+          ].map((item) => (
+            <button 
+              key={item.id}
+              className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all group ${
+                activeView === item.id 
+                  ? 'bg-[#FF5A5A]/10 text-[#FF5A5A] border border-[#FF5A5A]/10 shadow-[inset_0_0_0_1px_rgba(255,90,90,0.05)]' 
+                  : 'text-[#888] hover:bg-[#141414] hover:text-[#E2E2E2] border border-transparent'
+              }`} 
+              onClick={() => setActiveView(item.id as CRMView)}
+            >
+              <item.icon size={18} className={`transition-colors ${activeView === item.id ? 'text-[#FF5A5A]' : 'text-[#666] group-hover:text-[#AAA]'}`} />
+              {item.label}
+            </button>
+          ))}
+
+          <span className="text-[10px] font-bold text-[#555] uppercase tracking-[0.15em] mb-3 ml-2 mt-6">Suporte</span>
+          <button 
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all group ${
+              activeView === 'ajuda' ? 'bg-[#FF5A5A]/10 text-[#FF5A5A] border border-[#FF5A5A]/10' : 'text-[#888] hover:bg-[#141414] hover:text-[#E2E2E2] border border-transparent'
+            }`} 
+            onClick={() => setActiveView('ajuda')}
+          >
+            <HelpCircle size={18} className={`transition-colors ${activeView === 'ajuda' ? 'text-[#FF5A5A]' : 'text-[#666] group-hover:text-[#AAA]'}`} /> Ajuda & Tutoriais
           </button>
         </div>
 
-        <div className="crm-footer">
-          <button className="menu-btn logout" onClick={handleLogout}>
-            <LogOut size={18} /> Sair
+        <div className="p-5 border-t border-[#1A1A1A]">
+          <button className="flex items-center w-full gap-3 px-4 py-3 text-[#888] hover:text-[#FF5A5A] hover:bg-[#FF5A5A]/5 rounded-lg transition-all text-sm font-medium" onClick={handleLogout}>
+            <LogOut size={18} /> Sair do Sistema
           </button>
         </div>
       </aside>
 
       {/* Main Content */}
-      <main className="crm-main">
-        <header className="crm-topbar">
-          <div className="topbar-left">
-            <LayoutDashboard size={20} color="#8B0000" />
-            <h1 style={{ textTransform: 'capitalize' }}>{getViewTitle()}</h1>
+      <main className="flex-1 flex flex-col overflow-hidden bg-[#101010] relative z-10">
+        {/* Glow Effects */}
+        <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] bg-[#FF5A5A]/5 rounded-full blur-[120px] pointer-events-none" />
+
+        <header className="h-[72px] bg-[#0C0C0C]/80 backdrop-blur-md border-b border-[#1A1A1A] flex items-center justify-between px-8 sticky top-0 z-30">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-[#FF5A5A]/10 flex items-center justify-center border border-[#FF5A5A]/20">
+              <LayoutDashboard size={16} className="text-[#FF5A5A]" />
+            </div>
+            <h1 className="text-lg font-semibold text-[#E2E2E2] capitalize tracking-tight">{getViewTitle()}</h1>
           </div>
-          {session?.user?.email && <div className="user-email">{session.user.email}</div>}
+          {session?.user?.email && (
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full bg-[#1A1A1A] border border-[#333] flex items-center justify-center">
+                 <span className="text-xs text-[#888] font-bold">{session.user.email.charAt(0).toUpperCase()}</span>
+              </div>
+              <div className="text-sm text-[#888] font-medium hidden md:block">{session.user.email}</div>
+            </div>
+          )}
         </header>
 
-        <div className="crm-content-area">
+        <div className="flex-1 overflow-y-auto p-8 relative z-10 crm-custom-scrollbar">
           {renderView()}
         </div>
       </main>
