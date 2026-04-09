@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { Mail, Lock, ArrowRight } from 'lucide-react';
-import Header from '@/components/layout/Header';
+
+
 
 export default function AdminLogin() {
   const [email, setEmail] = useState('');

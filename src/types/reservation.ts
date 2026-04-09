@@ -49,7 +49,10 @@ export interface FormErrors {
   buffet?: string;
 }
 
+// CRM pipeline stages (for Leads/Pipeline view)
 export type CRMStage = 'novo' | 'em_contato' | 'negociando' | 'fechado' | 'perdido';
-export type ReservationStatus = CRMStage;
-export type FilterType = 'all' | CRMStage;
+
+// D'Luigi reservation statuses (for reservations management)
+export type ReservationStatus = 'pendente' | 'confirmada' | 'cancelada';
+export type FilterType = 'all' | ReservationStatus;
 export type CRMView = 'dashboard' | 'pipeline' | 'leads' | 'templates' | 'pacotes' | 'ajuda';

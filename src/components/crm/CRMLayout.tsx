@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import type { Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { Reservation, CRMView, Package } from '@/types/reservation';
-import { LayoutDashboard, Columns, Users, FileText, Package as PackageIcon, HelpCircle, LogOut } from 'lucide-react';
+import { LayoutDashboard, Columns, Users, Package as PackageIcon, HelpCircle, LogOut } from 'lucide-react';
 import CRMDashboard from './CRMDashboard';
 import CRMPipeline from './CRMPipeline';
 import CRMLeads from './CRMLeads';

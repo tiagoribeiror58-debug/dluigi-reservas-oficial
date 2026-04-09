@@ -497,3 +497,46 @@ Foram implementados ajustes pontuais de UX na tela pública, identificados após
 - **Eliminação de Emojis:** Todos os emojis genéricos (`🟡`, `📅`, `👥`, `🍕`, `🎁`) do Pipeline, Modal e Listagem foram substituídos pelo set corporativo e elegante da **Lucide React**, vetorizando a interface administrativa.
 - **Dark Mode Premium:** O contraste agressivo (amarelos contra fundos puros `#000`) foi remodelado para a paleta Apple macOS Style (`#0C0C0C`, e bordas transparentes `#222`).  
 - **Salvar Notas:** Um botão explícito `Salvar Anotações` foi instalado na aba Contexto, abandonando o arriscado `onBlur` (que podia causar ansiedade no operador de não saber se salvou). O modal agora possui feed de `✅ Salvo com sucesso`.
+
+---
+
+# Correção Crítica (09/04/26) — Projeto Quebrado
+
+## Causa Raiz: `src/lib/utils.ts` em UTF-16 LE
+
+O arquivo `utils.ts` foi salvo com encoding **UTF-16 LE** (padrão do Notepad antigo do Windows) em vez de **UTF-8** (esperado pelo TypeScript). Com UTF-16, cada caractere ocupa 2 bytes com um null byte (`\u0000`) entre cada caractere real. O TypeScript interpretou todos esses null bytes como "caracteres inválidos" — gerando mais de 2.700 erros de compilação.
+
+**Solução:** O arquivo foi deletado via terminal e recriado do zero em UTF-8 limpo, mesclando:
+- A função `cn()` do shadcn/ui (que existia apenas na versão corrompida)
+- Toda a lógica de negócio do `utils_backup.ts`
+
+O arquivo backup (`utils_backup.ts`) foi removido após a restauração.
+
+## Bugs Secundários Corrigidos (erros de TypeScript reais)
+
+1. **Tipos misturados — `ReservationStatus` vs `CRMStage`:**
+   - `ReservationStatus` foi equivocadamente aliasado para `CRMStage` (`novo | em_contato | negociando | fechado | perdido`)
+   - O sistema D'Luigi uses `pendente | confirmada | cancelada` como status de reserva
+   - Separados os dois domínios no `types/reservation.ts` com comentários explicativos
+
+2. **`CRMPackages.tsx` — campo `image_url` obsoleto:**
+   - Restava código de migração que tentava acessar `editingPkg.image_url` (singular, campo antigo)
+   - O tipo `Package` já havia sido migrado para `image_urls` (plural/array)
+   - Removido o bloco de migração morto
+
+3. **Imports não usados (4 arquivos):**
+   - `CRMLayout.tsx` — `FileText` de lucide-react removido
+   - `CRMLeadModal.tsx` — `useEffect` removido
+   - `SuccessScreen.tsx` — `React` default import removido (desnecessário no React 17+)
+   - `AdminLogin.tsx` — `Header` e `{ Mail, Lock, ArrowRight }` removidos
+
+4. **Erro de Build no CSS (Tailwind/Shadcn):**
+   - A inicialização prévia do `shadcn/ui` gerou dependências fantasmas no `index.css` (`@apply border-border outline-ring/50`) e um `@import "shadcn/tailwind.css"` inválido.
+   - **Correção:** O CSS do Shadcn base (`body`, `html`, `*`) foi limpo para não conflitar com a estilização customizada da pizzaria, o importe removido e o `tailwind.config.js` estendido corretamente com as variáveis nativas do Tailwind.
+
+## Estado após correções
+
+- `npm run typecheck` → **exit code 0** (zero erros)
+- `npm run build` → **exit code 0** (build de produção passando perfeitamente)
+- Servidor Vite roda limpo
+- Estrutura de pastas `src/` mantida intacta

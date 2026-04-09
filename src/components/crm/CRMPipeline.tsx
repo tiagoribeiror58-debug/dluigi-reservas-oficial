@@ -1,7 +1,11 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Reservation, CRMStage, Package } from '@/types/reservation';
 import CRMLeadModal from './CRMLeadModal';
-import { Calendar, Users, Pizza, Phone } from 'lucide-react';
+import { KanbanCard } from './KanbanCard';
+import { Input } from '@/components/ui/input';
+import { DragDropContext, Droppable, Draggable, type DropResult, type DroppableProvided, type DroppableStateSnapshot, type DraggableProvided, type DraggableStateSnapshot } from "@hello-pangea/dnd";
+import { Search } from 'lucide-react';
+import { toast } from "sonner";
 
 interface CRMPipelineProps {
   leads: Reservation[];
@@ -20,90 +24,105 @@ const STAGES: { id: CRMStage; label: string; width: string }[] = [
 
 export default function CRMPipeline({ leads, packages, onUpdateStatus, onUpdateNotes }: CRMPipelineProps) {
   const [selectedLead, setSelectedLead] = useState<Reservation | null>(null);
+  const [search, setSearch] = useState("");
 
-  const handleDragStart = (e: React.DragEvent, id: string) => {
-    e.dataTransfer.setData('leadId', id);
-    e.currentTarget.classList.add('dragging');
-  };
+  const filtered = useMemo(() => {
+    if (!search) return leads;
+    const q = search.toLowerCase();
+    return leads.filter(
+      (l) =>
+        l.name.toLowerCase().includes(q) ||
+        l.phone?.toLowerCase().includes(q) ||
+        l.buffet?.toLowerCase().includes(q)
+    );
+  }, [leads, search]);
 
-  const handleDragEnd = (e: React.DragEvent) => {
-    e.currentTarget.classList.remove('dragging');
-  };
+  const columns = useMemo(
+    () =>
+      STAGES.map((stage) => ({
+        status: stage.id,
+        label: stage.label,
+        width: stage.width,
+        leads: filtered.filter((l) => l.status === stage.id),
+      })),
+    [filtered]
+  );
 
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault(); // allow drop
-    e.currentTarget.classList.add('drag-over');
-  };
-
-  const handleDragLeave = (e: React.DragEvent) => {
-    e.currentTarget.classList.remove('drag-over');
-  };
-
-  const handleDrop = (e: React.DragEvent, targetStage: CRMStage) => {
-    e.preventDefault();
-    e.currentTarget.classList.remove('drag-over');
-    const leadId = e.dataTransfer.getData('leadId');
-    if (leadId) {
-      const lead = leads.find(l => l.id === leadId);
-      if (lead && lead.status !== targetStage) {
-        onUpdateStatus(leadId, targetStage);
-      }
-    }
+  const onDragEnd = (result: DropResult) => {
+    if (!result.destination) return;
+    const newStatus = result.destination.droppableId as CRMStage;
+    const leadId = result.draggableId;
+    if (leads.find((l) => l.id === leadId)?.status === newStatus) return;
+    
+    // Optimistic UI state from parent takes care of immediate swap
+    onUpdateStatus(leadId, newStatus);
+    toast.success(`Movido para ${STAGES.find(s => s.id === newStatus)?.label}`);
   };
 
   return (
-    <div className="crm-fade-in" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <div className="crm-dash-header">
-        <h2 className="view-title">Pipeline</h2>
-        <p className="view-sub">{leads.length} leads no total</p>
+    <div className="crm-fade-in flex flex-col h-full">
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h2 className="view-title text-2xl font-bold text-white">Pipeline</h2>
+          <p className="view-sub text-sm text-[#888]">{leads.length} leads no total</p>
+        </div>
+        <div className="relative w-72">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#888]" />
+          <Input
+            placeholder="Buscar por nome, telefone..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-9 bg-[#111] border-[#333] text-white focus-visible:ring-[#FF5A5A]"
+          />
+        </div>
       </div>
 
-      <div className="kanban-board" style={{ display: 'flex', gap: '16px', flex: 1, overflowX: 'auto', paddingBottom: '20px' }}>
-        {STAGES.map((stage) => {
-          const colLeads = leads.filter(l => l.status === stage.id);
-          
-          return (
-            <div 
-              key={stage.id} 
-              className="kanban-col" 
-              style={{ minWidth: stage.width, display: 'flex', flexDirection: 'column', gap: '12px', background: 'transparent', borderRadius: '8px', padding: '4px', transition: 'background 0.2s' }}
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-              onDrop={(e) => handleDrop(e, stage.id)}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #222', paddingBottom: '12px' }}>
-                <span style={{ fontWeight: 600, fontSize: '15px' }}>{stage.label}</span>
-                <span style={{ color: '#888', fontSize: '13px' }}>{colLeads.length}</span>
-              </div>
-              
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', flex: 1, overflowY: 'auto', paddingRight: '4px' }}>
-                {colLeads.map(lead => (
-                  <div 
-                    key={lead.id} 
-                    className="kanban-card" 
-                    draggable
-                    onDragStart={(e) => handleDragStart(e, lead.id!)}
-                    onDragEnd={handleDragEnd}
-                    onClick={() => setSelectedLead(lead)}
-                    style={{ background: '#0C0C0C', padding: '16px', borderRadius: '12px', border: '1px solid #222', cursor: 'grab', transition: 'all 0.2s', boxShadow: '0 2px 8px rgba(0,0,0,0.2)' }}
-                    onMouseOver={(e) => { e.currentTarget.style.borderColor = '#444'; e.currentTarget.style.transform = 'translateY(-2px)' }}
-                    onMouseOut={(e) => { e.currentTarget.style.borderColor = '#222'; e.currentTarget.style.transform = 'translateY(0)' }}
-                  >
-                    <div style={{ fontWeight: 600, fontSize: '14px', marginBottom: '12px', color: '#FFF' }}>{lead.name}</div>
-                    
-                    <div style={{ fontSize: '12px', color: '#888', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                      <span style={{ color: '#FF5A5A', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 500 }}><Pizza size={12}/> <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{lead.buffet}</span></span>
-                      <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Phone size={12}/> {lead.phone}</span>
-                      <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Users size={12}/> {lead.guests} pessoas</span>
-                      <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Calendar size={12}/> {new Date(lead.date+'T12:00').toLocaleDateString('pt-BR')}</span>
-                    </div>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <div className="flex gap-4 overflow-x-auto flex-1 pb-4 items-start">
+          {columns.map((col) => (
+            <Droppable droppableId={col.status} key={col.status}>
+              {(provided: DroppableProvided, snapshot: DroppableStateSnapshot) => (
+                <div
+                  ref={provided.innerRef}
+                  {...provided.droppableProps}
+                  className={`flex-shrink-0 flex flex-col rounded-xl p-3 transition-colors border border-[#222] min-h-[500px] h-fit max-h-[75vh] ${
+                    snapshot.isDraggingOver ? "bg-[#fff]/5 border-[#FF5A5A]/30" : "bg-transparent"
+                  }`}
+                  style={{ minWidth: col.width }}
+                >
+                  <div className="flex items-center justify-between mb-4 px-1 border-b border-[#222] pb-3 shrink-0">
+                    <h3 className="text-[15px] font-semibold text-white">{col.label}</h3>
+                    <span className="text-xs bg-[#1A1A1A] rounded-full px-2.5 py-0.5 text-[#888] font-medium border border-[#333]">
+                      {col.leads.length}
+                    </span>
                   </div>
-                ))}
-              </div>
-            </div>
-          );
-        })}
-      </div>
+                  
+                  <div className="space-y-3 flex-1 flex flex-col overflow-y-auto pr-1">
+                    {col.leads.map((lead, index) => (
+                      <Draggable key={lead.id + (lead.status || '')} draggableId={lead.id!} index={index}>
+                        {(provided: DraggableProvided, snapshot: DraggableStateSnapshot) => (
+                          <div
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            style={{
+                              ...provided.draggableProps.style,
+                              opacity: snapshot.isDragging ? 0.8 : 1,
+                            }}
+                          >
+                            <KanbanCard lead={lead} onClick={() => setSelectedLead(lead)} />
+                          </div>
+                        )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
+                  </div>
+                </div>
+              )}
+            </Droppable>
+          ))}
+        </div>
+      </DragDropContext>
 
       {selectedLead && (
         <CRMLeadModal 
@@ -114,7 +133,7 @@ export default function CRMPipeline({ leads, packages, onUpdateStatus, onUpdateN
             onUpdateStatus(id, status);
             setSelectedLead(null); 
           }}
-          onUpdateNotes={onUpdateNotes} 
+          onUpdateNotes={(id, notes) => onUpdateNotes(id, notes)} 
         />
       )}
     </div>

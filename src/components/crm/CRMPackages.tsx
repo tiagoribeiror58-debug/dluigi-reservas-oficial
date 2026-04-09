@@ -39,11 +39,7 @@ export default function CRMPackages() {
 
     const { data } = supabase.storage.from('package_images').getPublicUrl(fileName);
     const updatedUrls = [...(editingPkg.image_urls || []), data.publicUrl];
-    if (editingPkg.image_url && !editingPkg.image_urls?.includes(editingPkg.image_url)) {
-      // Migrate old image_url if present
-      updatedUrls.unshift(editingPkg.image_url);
-    }
-    setEditingPkg({ ...editingPkg, image_urls: updatedUrls, image_url: '' });
+    setEditingPkg({ ...editingPkg, image_urls: updatedUrls });
     setUploading(false);
   };
   
