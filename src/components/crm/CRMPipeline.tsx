@@ -61,12 +61,12 @@ export default function CRMPipeline({ leads, packages, onUpdateStatus, onUpdateN
 
   return (
     <div className="crm-fade-in flex flex-col h-full">
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 md:mb-8">
         <div>
-          <h2 className="view-title text-2xl font-bold text-white">Pipeline</h2>
-          <p className="view-sub text-sm text-[#888]">{leads.length} leads no total</p>
+          <h2 className="view-title text-2xl font-bold text-white">Quadro de Reservas</h2>
+          <p className="view-sub text-sm text-[#888]">{leads.length} reservas no total</p>
         </div>
-        <div className="relative w-72">
+        <div className="relative w-full md:w-72">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#888]" />
           <Input
             placeholder="Buscar por nome, telefone..."

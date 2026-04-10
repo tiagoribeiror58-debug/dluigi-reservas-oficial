@@ -91,12 +91,12 @@ export default function CRMLeads({ leads, packages, onUpdateStatus, onUpdateNote
   return (
     <div className="crm-fade-in flex flex-col h-full animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex flex-col gap-1 mb-6">
-        <h2 className="text-3xl font-bold tracking-tight text-white">Leads</h2>
-        <p className="text-[#888] font-medium">{leads.length} leads cadastrados no pipeline</p>
+        <h2 className="text-3xl font-bold tracking-tight text-white">Lista de Reservas</h2>
+        <p className="text-[#888] font-medium">{leads.length} solicitações cadastradas</p>
       </div>
 
       <div className="flex flex-col md:flex-row gap-4 mb-6 bg-[#0C0C0C] p-4 rounded-xl border border-[#222]">
-        <div className="w-[180px]">
+        <div className="w-full md:w-[180px] shrink-0">
           <Select value={statusFilter} onValueChange={setStatusFilter}>
              <SelectTrigger className="w-full bg-[#1A1A1A] border-[#333] text-white">
                <SelectValue placeholder="Status" />
@@ -112,13 +112,13 @@ export default function CRMLeads({ leads, packages, onUpdateStatus, onUpdateNote
           </Select>
         </div>
         
-        <div className="w-[200px]">
+        <div className="w-full md:w-[200px] shrink-0">
           <Select value={datePreset} onValueChange={setDatePreset}>
              <SelectTrigger className="w-full bg-[#1A1A1A] border-[#333] text-white">
                <SelectValue placeholder="Período" />
              </SelectTrigger>
              <SelectContent className="bg-[#1A1A1A] border-[#333] text-white">
-                <SelectItem value="Todos">📅 Qualquer Data</SelectItem>
+                <SelectItem value="Todos">Qualquer Data</SelectItem>
                 <SelectItem value="Hoje">Hoje</SelectItem>
                 <SelectItem value="Amanhã">Amanhã</SelectItem>
                 <SelectItem value="Proximos7">Próximos 7 dias</SelectItem>
@@ -129,26 +129,26 @@ export default function CRMLeads({ leads, packages, onUpdateStatus, onUpdateNote
         </div>
 
         {datePreset === 'Personalizado' && (
-          <div className="flex items-center gap-2 animate-in slide-in-from-left-4">
+          <div className="flex flex-col md:flex-row items-stretch md:items-center gap-2 animate-in slide-in-from-left-4 w-full md:w-auto shrink-0">
             <input 
               type="date" 
               value={dateStart}
               onChange={(e) => setDateStart(e.target.value)}
-              className="bg-[#1A1A1A] text-white border border-[#333] px-3 py-2 rounded-md outline-none text-sm transition-colors focus:border-[#FF5A5A] [color-scheme:dark]"
+              className="bg-[#1A1A1A] text-white border border-[#333] px-3 py-2 rounded-md outline-none text-sm transition-colors focus:border-[#FF5A5A] [color-scheme:dark] w-full"
               title="Data inicial"
             />
-            <span className="text-[#888] text-sm font-medium">até</span>
+            <span className="text-[#888] text-sm font-medium text-center hidden md:block">até</span>
             <input 
               type="date" 
               value={dateEnd}
               onChange={(e) => setDateEnd(e.target.value)}
-              className="bg-[#1A1A1A] text-white border border-[#333] px-3 py-2 rounded-md outline-none text-sm transition-colors focus:border-[#FF5A5A] [color-scheme:dark]"
+              className="bg-[#1A1A1A] text-white border border-[#333] px-3 py-2 rounded-md outline-none text-sm transition-colors focus:border-[#FF5A5A] [color-scheme:dark] w-full"
               title="Data final"
             />
           </div>
         )}
 
-        <div className="relative flex-1 max-w-md">
+        <div className="relative flex-1 w-full max-w-full md:max-w-md">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#888]" />
           <input 
             type="text" 
@@ -167,9 +167,9 @@ export default function CRMLeads({ leads, packages, onUpdateStatus, onUpdateNote
               <tr>
                 <th className="px-6 py-4 text-[#888] font-semibold">Nome Principal</th>
                 <th className="px-6 py-4 text-[#888] font-semibold">Contato</th>
-                <th className="px-6 py-4 text-[#888] font-semibold">Data do Evento</th>
+                <th className="px-6 py-4 text-[#888] font-semibold">Data da Reserva</th>
                 <th className="px-6 py-4 text-[#888] font-semibold">Especificações</th>
-                <th className="px-6 py-4 text-[#888] font-semibold text-right">Status do Deal</th>
+                <th className="px-6 py-4 text-[#888] font-semibold text-right">Status da Reserva</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#1A1A1A]">
@@ -180,9 +180,9 @@ export default function CRMLeads({ leads, packages, onUpdateStatus, onUpdateNote
                   className="group cursor-pointer hover:bg-[#151515] transition-colors"
                 >
                   <td className="px-6 py-4 text-white font-medium group-hover:text-[#FF5A5A] transition-colors">{lead.name}</td>
-                  <td className="px-6 py-4 text-[#A0A0A0]">{lead.phone}</td>
-                  <td className="px-6 py-4 text-[#A0A0A0]">{new Date(lead.date+'T12:00').toLocaleDateString('pt-BR')}</td>
-                  <td className="px-6 py-4 text-[#A0A0A0]">
+                  <td className="px-6 py-4 text-[#F3F4F6]">{lead.phone}</td>
+                  <td className="px-6 py-4 text-[#F3F4F6]">{new Date(lead.date+'T12:00').toLocaleDateString('pt-BR')}</td>
+                  <td className="px-6 py-4 text-[#F3F4F6]">
                     <div className="flex flex-col gap-1">
                       <span className="font-medium">{lead.buffet}</span>
                       {lead.package_id && (
@@ -211,7 +211,7 @@ export default function CRMLeads({ leads, packages, onUpdateStatus, onUpdateNote
                   <td colSpan={5} className="py-24 text-center">
                     <div className="flex flex-col items-center justify-center text-[#555]">
                       <FilterX size={48} className="mb-4 opacity-20" />
-                      <p className="text-base font-medium">Nenhum lead encontrado.</p>
+                      <p className="text-base font-medium">Nenhuma reserva encontrada.</p>
                       <p className="text-sm">Tente ajustar seus filtros para outra data ou status.</p>
                     </div>
                   </td>

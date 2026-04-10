@@ -25,6 +25,7 @@ export interface BuffetOption {
   value: string;
   label: string;
   desc: string;
+  price?: string;
 }
 
 export interface Reservation {

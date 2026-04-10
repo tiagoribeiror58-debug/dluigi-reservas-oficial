@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Package, Reservation, FormErrors } from '@/types/reservation';
 import { PACKAGES } from '@/lib/constants'; // Fallback
-import { validateForm, getBlockedDates, detectPeriod } from '@/lib/utils';
+import { validateForm, getBlockedDates } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import Hero from '@/components/landing/Hero';
 import VideoSection from '@/components/landing/VideoSection';
@@ -98,7 +98,6 @@ export default function Home({ onSuccess }: HomeProps) {
       return;
     }
 
-    const period = detectPeriod(form.time);
     const reservation = {
       name: form.name,
       phone: form.phone,
@@ -109,8 +108,7 @@ export default function Home({ onSuccess }: HomeProps) {
       buffet: form.buffet,
       birthday: form.birthday,
       notes: form.notes,
-      period,
-      status: 'pendente',
+      status: 'novo',
       package_id: selectedPackage || '',
     };
 
@@ -134,16 +132,8 @@ export default function Home({ onSuccess }: HomeProps) {
   return (
     <>
       <Hero onCtaClick={scrollToPackages} />
-      <VideoSection 
-        title="Conheça o Nosso Espaço" 
-        subtitle="Assista aos nossos vídeos e sinta a atmosfera perfeita para a sua família"
-        videos={[
-          { id: '1', url: '/videos/video1.mp4', title: 'Espaço Amplo e Kids' },
-          { id: '2', url: '/videos/video2.mp4', title: 'D\'Luigi Pizzaria' },
-          { id: '5', url: '/videos/VIDEO 5.MP4', title: 'Uma Noite Especial' }
-        ]}
-      />
-      <div className="divider my-8">
+      
+      <div className="divider">
         <hr />
       </div>
 
@@ -154,16 +144,30 @@ export default function Home({ onSuccess }: HomeProps) {
         title={landingConfig.title} 
         subtitle={landingConfig.subtitle} 
       />
+
+      <div className="divider">
+        <hr />
+      </div>
+
+      <VideoSection 
+        title="Conheça o Nosso Espaço" 
+        subtitle="Assista aos nossos vídeos e sinta a atmosfera perfeita para a sua família"
+        videos={[
+          { id: '1', url: '/videos/video1.mp4', title: 'Espaço Amplo e Kids' },
+          { id: '2', url: '/videos/video2.mp4', title: 'D\'Luigi Pizzaria' },
+          { id: '5', url: '/videos/VIDEO 5.MP4', title: 'Uma Noite Especial' }
+        ]}
+      />
       <div className="divider">
         <hr />
       </div>
       <PhotoGallery />
-      <div className="divider my-6">
+      <div className="divider">
         <hr />
       </div>
       <GoogleReviewsSection />
       
-      <div className="divider my-6">
+      <div className="divider">
         <hr />
       </div>
       <VideoSection 

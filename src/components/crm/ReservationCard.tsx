@@ -98,7 +98,7 @@ export default function ReservationCard({ reservation, onUpdateStatus, onUpdateA
 
       {reservation.birthday && (
         <p style={{ fontSize: '12px', color: 'var(--red)', fontWeight: 600, marginBottom: '8px' }}>
-          🎂 Aniversariante presente
+          Aniversariante presente
         </p>
       )}
 

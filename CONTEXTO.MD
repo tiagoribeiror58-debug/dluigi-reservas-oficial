@@ -539,4 +539,13 @@ O arquivo backup (`utils_backup.ts`) foi removido após a restauração.
 - `npm run typecheck` → **exit code 0** (zero erros)
 - `npm run build` → **exit code 0** (build de produção passando perfeitamente)
 - Servidor Vite roda limpo
-- Estrutura de pastas `src/` mantida intacta
+- Estrutura de pastas `src/` mantida intacta
+
+---
+
+# Atualizações (09/04/26) - Responsividade Mobile do Admin
+
+- **CRMLayout:** Adicionado menu Drawer/Hamburguer para telas mobile, escondendo a sidebar lateral para liberar espaço útil e fornecendo uma sobreposição (overlay) que pode ser facilmente descartada.
+- **CRMPipeline:** Cabeçalho empilhado (flex-col) e busca (input) expandida para `w-full` em telas menores. O drag-and-drop Kanban continua se valendo do scroll horizontal flexível que já era nativo.
+- **CRMLeads:** Filtros de Status, Período e Busca redimensionados (`w-full` em mobile) usando layout de quebra nativo. A tabela já continha overflow para scroll horizontal que é ideal para tabelas no mobile.
+- **CRMLeadModal:** Reformulado o grid de informações do lead (`grid-cols-1` em mobile, `grid-cols-2` desktop) e os botões de ação na seção inferior de Pipeline e WhatsApp fluindo horizontal/verticalmente conforme a tela permite (inclusive com o Select usando o espaço útil restrito).

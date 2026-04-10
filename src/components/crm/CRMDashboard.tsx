@@ -40,7 +40,7 @@ export default function CRMDashboard({ leads, loading }: { leads: Reservation[],
         <div className="bg-[#151515] border border-[#2A2A2A] rounded-2xl p-6 shadow-xl flex justify-between group overflow-hidden relative">
           <div className="absolute inset-0 bg-gradient-to-br from-[#60A5FA]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
           <div className="relative z-10">
-            <div className="text-[#888] text-sm font-medium mb-1">Total de Leads</div>
+            <div className="text-[#888] text-sm font-medium mb-1">Total de Solicitações</div>
             <div className="text-4xl font-bold text-white tracking-tight">{total}</div>
           </div>
           <div className="w-12 h-12 bg-[#60A5FA]/10 rounded-xl flex items-center justify-center text-[#60A5FA] relative z-10">
@@ -88,7 +88,7 @@ export default function CRMDashboard({ leads, loading }: { leads: Reservation[],
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-[#151515] border border-[#2A2A2A] rounded-2xl p-6 shadow-xl">
-          <h3 className="text-lg font-semibold text-white mb-6">Funil de Leads</h3>
+          <h3 className="text-lg font-semibold text-white mb-6">Funil de Reservas</h3>
           <div className="h-[280px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={statusData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>

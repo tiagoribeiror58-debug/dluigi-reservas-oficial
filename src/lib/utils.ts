@@ -6,20 +6,6 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function getMinDate(guests?: string | number): string {
-  const g = parseInt(String(guests)) || 0;
-  const days = g > 20 ? 2 : 1;
-  const date = new Date();
-  date.setDate(date.getDate() + days);
-  return date.toISOString().split('T')[0];
-}
-
-export function detectPeriod(time: string): 'diurno' | 'noturno' {
-  if (!time) return 'noturno';
-  const hour = parseInt(time.split(':')[0], 10);
-  return hour >= 18 ? 'noturno' : 'diurno';
-}
-
 export function getBlockedDates(): string[] {
   // Retornará datas bloqueadas no futuro
   return [];

@@ -25,9 +25,13 @@ export default function ReservationModal({
   onSubmit,
 }: ReservationModalProps) {
   const [imgIndex, setImgIndex] = useState(0);
+  const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
-    if (isOpen) setImgIndex(0);
+    if (isOpen) {
+      setImgIndex(0);
+      setShowForm(false);
+    }
   }, [isOpen]);
 
   if (!isOpen) return null;
@@ -54,7 +58,7 @@ export default function ReservationModal({
           background: 'var(--cream)',
           borderRadius: '24px',
           width: '100%',
-          maxWidth: pkg ? '1000px' : '650px',
+          maxWidth: !showForm ? (pkg ? '650px' : '650px') : (pkg ? '1000px' : '650px'),
           maxHeight: '90vh',
           display: 'flex',
           flexDirection: 'row',
@@ -62,6 +66,7 @@ export default function ReservationModal({
           boxShadow: '0 40px 60px rgba(0,0,0,0.4)',
           position: 'relative',
           animation: 'fadeIn 0.3s ease',
+          transition: 'max-width 0.3s ease',
         }}
       >
         <button 
@@ -69,8 +74,8 @@ export default function ReservationModal({
           style={{
             position: 'absolute',
             top: '20px',
-            right: '20px',
-            background: 'rgba(0,0,0,0.05)',
+            right: !showForm && pkg ? '20px' : '20px',
+            background: 'rgba(0,0,0,0.1)',
             border: 'none',
             borderRadius: '50%',
             width: '36px',
@@ -79,8 +84,9 @@ export default function ReservationModal({
             alignItems: 'center',
             justifyContent: 'center',
             cursor: 'pointer',
-            zIndex: 10,
-            color: 'var(--txt-main)',
+            zIndex: 20,
+            color: !showForm && pkg && currentImage ? '#FFF' : 'var(--txt-main)',
+            backdropFilter: 'blur(4px)'
           }}
         >
           <X size={20} />
@@ -88,7 +94,7 @@ export default function ReservationModal({
 
         {pkg && (
           <div className="res-modal-pkg-info" style={{
-            flex: '1',
+            flex: !showForm ? '1' : '1',
             background: currentImage 
               ? `linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.85)), url(${currentImage})` 
               : `linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.85))`,
@@ -100,10 +106,12 @@ export default function ReservationModal({
             flexDirection: 'column',
             justifyContent: 'flex-end',
             color: '#FFF',
-            borderRight: '1px solid rgba(0,0,0,0.3)',
-            minHeight: '400px',
-            position: 'relative'
-          }}>
+            borderRight: showForm ? '1px solid rgba(0,0,0,0.3)' : 'none',
+            minHeight: !showForm ? '60vh' : '400px',
+            position: 'relative',
+            transition: 'all 0.3s ease'
+          }}
+          >
             {images && images.length > 1 && (
               <>
                 <button onClick={handlePrev} style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.2)', border: 'none', borderRadius: '50%', width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFF', cursor: 'pointer', backdropFilter: 'blur(4px)' }}>
@@ -112,7 +120,7 @@ export default function ReservationModal({
                 <button onClick={handleNext} style={{ position: 'absolute', right: 16, top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.2)', border: 'none', borderRadius: '50%', width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFF', cursor: 'pointer', backdropFilter: 'blur(4px)' }}>
                   <ChevronRight size={20} />
                 </button>
-                <div style={{ position: 'absolute', bottom: 16, left: 0, width: '100%', display: 'flex', justifyContent: 'center', gap: 6 }}>
+                <div style={{ position: 'absolute', bottom: !showForm ? 90 : 16, left: 0, width: '100%', display: 'flex', justifyContent: 'center', gap: 6, transition: 'bottom 0.3s' }}>
                   {images.map((_, i) => (
                     <div key={i} style={{ width: i === imgIndex ? 20 : 6, height: 6, borderRadius: 3, background: i === imgIndex ? 'var(--red)' : 'rgba(255,255,255,0.5)', transition: 'all 0.3s' }} />
                   ))}
@@ -129,31 +137,47 @@ export default function ReservationModal({
               </span>
               {pkg.price && (
                 <span style={{ 
-                  background: 'rgba(255,255,255,0.15)', color: '#FFF', padding: '6px 14px', 
-                  borderRadius: '20px', fontSize: '13px', fontWeight: 700, backdropFilter: 'blur(4px)'
+                  background: 'rgba(255,255,255,0.95)', color: 'var(--red)', padding: '6px 16px', 
+                  borderRadius: '20px', fontSize: '15px', fontWeight: 900, boxShadow: '0 4px 12px rgba(0,0,0,0.3)', border: '2px solid rgba(255,255,255,0.2)'
                 }}>
                   {pkg.price}
                 </span>
               )}
             </div>
             <h3 style={{ fontSize: '32px', fontFamily: "'Playfair Display', serif", marginBottom: '12px' }}>{pkg.title}</h3>
-            <p style={{ fontSize: '15px', lineHeight: '1.6', color: 'rgba(255,255,255,0.9)' }}>
+            <p style={{ fontSize: '15px', lineHeight: '1.6', color: 'rgba(255,255,255,0.9)', marginBottom: !showForm ? '24px' : '0' }}>
               {pkg.desc}
             </p>
+
+            {!showForm && (
+              <button 
+                onClick={() => setShowForm(true)}
+                className="btn-primary animate-in slide-in-from-bottom-4 fade-in duration-300"
+                style={{
+                  marginTop: 'auto',
+                  border: '1px solid rgba(255,255,255,0.2)',
+                  boxShadow: '0 12px 32px rgba(0,0,0,0.5)',
+                  background: 'var(--red)'
+                }}
+              >
+                Continuar para Reserva
+              </button>
+            )}
           </div>
         )}
 
-        <div className="res-modal-form-area dark-premium" style={{ flex: '1', overflowY: 'auto', padding: '40px', position: 'relative', background: '#180505', color: '#FFF' }}>
-          {/* We embed the ReservationForm directly, but we will hide some parts via CSS or adjust it */}
-          <ReservationForm
-            form={form}
-            errors={errors}
-            packages={packages}
-            selectedPackage={selectedPackage}
-            onFormChange={onFormChange}
-            onSubmit={onSubmit}
-          />
-        </div>
+        {showForm && (
+          <div className="res-modal-form-area animate-in slide-in-from-right-8 fade-in duration-300" style={{ flex: '1', overflowY: 'auto', padding: '40px', position: 'relative', background: 'var(--cream)', color: '#111' }}>
+            <ReservationForm
+              form={form}
+              errors={errors}
+              packages={packages}
+              selectedPackage={selectedPackage}
+              onFormChange={onFormChange}
+              onSubmit={onSubmit}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

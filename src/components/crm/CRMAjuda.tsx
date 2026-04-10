@@ -148,7 +148,7 @@ const FAQ_SECTIONS: FAQSection[] = [
         q: 'O que são os Pacotes?',
         a: (
           <>
-            Pacotes são atalhos visuais que aparecem na landing page para o cliente. Em vez de preencher tudo do zero, ele clica em "Aniversário em família" e o formulário já vem pré-preenchido com o tipo de evento e cardápio sugerido.<br /><br />
+            Pacotes são atalhos visuais que aparecem na landing page para o cliente. Em vez de preencher tudo do zero, ele clica em "Aniversário em família" e toda a lógica flui mais amigável.<br /><br />
             <strong>Na prática:</strong> reduz o esforço do cliente e aumenta a chance de conversão. O sistema não muda a lógica — apenas facilita a decisão de compra.
           </>
         ),
@@ -163,23 +163,14 @@ const FAQ_SECTIONS: FAQSection[] = [
         ),
       },
       {
-        q: 'Como funciona o controle de "Campos Visíveis" no formulário?',
-        a: (
-          <>
-            Para respeitar a regra de "Manter Simples (KISS)", o seu cliente não deve ver campos inúteis.<br /><br />
-            Ao editar um pacote, você verá checkboxes de **"Campos Visíveis"** no final do painel. Se você for vender um "Pacote Fechado" em que o cliente não escolhe tipo de festa, simplesmente **desmarque** o campo 'Tipo Evento'. Ao abrir o pacote, o formulário esconderá essa pergunta pro cliente, fechando negócio bem mais rápido.
-          </>
-        ),
-      },
-      {
         q: 'Como editar, ativar ou desativar um pacote?',
         a: (
           <>
             Vá para a aba <strong>Pacotes</strong> no menu lateral. De lá você pode:<br /><br />
             — Ver todos os pacotes cadastrados.<br />
             — Ativar ou desativar (pacotes inativos somem do site na hora).<br />
-            — Editar título, descrição, **preço opcional (aparecerá com destaque na capa)**, cardápio e tipo de evento.<br /><br />
-            As mudanças refletem imediatamente na landing page — sem precisar de suporte.
+            — Editar título, descrição curta, imagens e **preço opcional (aparecerá com destaque na capa)**.<br /><br />
+            As mudanças refletem imediatamente na landing page — sem complexidade.
           </>
         ),
       },
