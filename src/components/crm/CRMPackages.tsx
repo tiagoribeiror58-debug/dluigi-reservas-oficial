@@ -10,6 +10,8 @@ export default function CRMPackages() {
   const [uploading, setUploading] = useState(false);
   const [landingConfig, setLandingConfig] = useState({ title: '', subtitle: '' });
   const [showAIPanel, setShowAIPanel] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [csvInsights, setCsvInsights] = useState<Partial<Package>[] | null>(null);
 
   useEffect(() => {
     loadPackages();
@@ -185,6 +187,82 @@ export default function CRMPackages() {
     return suggestions;
   };
 
+  const handleCsvUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsAnalyzing(true);
+    
+    // Boa prática: Ler o arquivo no lado do cliente (navegador) usando FileReader
+    // Isso evita enviar dados confidenciais do restaurante para um servidor desnecessariamente.
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const text = event.target?.result as string;
+      
+      // Simulando um tempo de processamento de IA para melhor UX e feedback visual
+      setTimeout(() => {
+        const lines = text.split('\n').filter(line => line.trim() !== '');
+        const clientCount = lines.length > 1 ? lines.length - 1 : 0; // Exclui cabeçalho
+        
+        const lowerText = text.toLowerCase();
+        const hasVIP = lowerText.includes('vip') || lowerText.includes('premium') || lowerText.includes('1000');
+        const hasKids = lowerText.includes('kids') || lowerText.includes('criança') || lowerText.includes('filho');
+        const hasCorporate = lowerText.includes('empresa') || lowerText.includes('corporativo') || lowerText.includes('cnpj');
+        const hasBdays = lowerText.includes('nascimento') || lowerText.includes('aniversario');
+
+        const newSuggestions: Partial<Package>[] = [];
+        
+        // Insight Genérico baseado em volume
+        newSuggestions.push({
+           title: 'Pacote Reativação de Base',
+           desc: `Sua base de dados importada possui ${clientCount} registros. Notamos que muitos não retornam há meses. Crie este pacote com desconto para trazer esse volume de volta.`,
+           tag: 'Análise Inteligente',
+           price: '10% OFF'
+        });
+
+        // Insights Contextuais Baseados no Conteúdo do CSV
+        if (hasVIP) {
+           newSuggestions.push({
+              title: 'Experiência VIP Exclusiva',
+              desc: 'Identificamos clientes com perfil de alto ticket na sua base. Ofereça um jantar harmonizado ou atendimento privativo.',
+              tag: 'Alto Padrão',
+              price: 'Sob Consulta'
+           });
+        }
+
+        if (hasKids) {
+           newSuggestions.push({
+              title: 'Domingo em Família (Kids)',
+              desc: 'Sua base possui indícios de foco familiar/infantil. Um pacote incluindo recreadores pode aumentar suas vendas aos finais de semana.',
+              tag: 'Família'
+           });
+        }
+
+        if (hasCorporate) {
+           newSuggestions.push({
+              title: 'Reserva Corporativa & Reuniões',
+              desc: 'Encontramos perfis empresariais no arquivo. Ofereça aluguel de espaço com projetor e coffee break.',
+              tag: 'B2B',
+              price: 'Pacote Fixo'
+           });
+        }
+        
+        if (hasBdays) {
+           newSuggestions.push({
+              title: 'Clube de Aniversariantes',
+              desc: 'Sua base rastreia datas de nascimento! Automatize um convite com bolo cortesia para os aniversariantes de cada mês.',
+              tag: 'Fidelização'
+           });
+        }
+
+        setCsvInsights(newSuggestions);
+        setIsAnalyzing(false);
+      }, 1800);
+    };
+    reader.readAsText(file);
+  };
+
+
   const handleDelete = async (id: string) => {
     if (window.confirm('Tem certeza que deseja deletar este pacote?')) {
       const { error } = await supabase.from('packages').delete().eq('id', id);
@@ -242,19 +320,15 @@ export default function CRMPackages() {
               </div>
               <div>
                 <label className="block text-xs text-[#AAA] mb-1.5 font-medium ml-1">Preço (Opcional)</label>
-                <div className="relative flex items-center">
-                  <span className="absolute left-4 text-[#AAA] text-sm font-medium z-10 pointer-events-none">R$</span>
-                  <input 
-                    type="text" 
-                    value={editingPkg.price || ''} 
-                    onChange={e => {
-                        let val = e.target.value.replace(/^R\$\s*/, '');
-                        setEditingPkg({...editingPkg, price: val})
-                    }}
-                    className="w-full pl-[36px] px-4 py-3 !bg-[#0A0A0A] border border-[#2A2A2A] focus:!border-[#FF5A5A] hover:!border-[#444] !text-white rounded-lg outline-none transition-all text-sm"
-                    placeholder="89,90"
-                  />
-                </div>
+                <input 
+                  type="text" 
+                  value={editingPkg.price || ''} 
+                  onChange={e => setEditingPkg({...editingPkg, price: e.target.value})}
+                  autoComplete="off"
+                  style={{ padding: '12px 16px' }}
+                  className="w-full !bg-[#0A0A0A] border border-[#2A2A2A] focus:!border-[#FF5A5A] hover:!border-[#444] !text-white rounded-lg outline-none transition-all text-sm"
+                  placeholder="R$ 89,90"
+                />
               </div>
             </div>
 
@@ -340,32 +414,61 @@ export default function CRMPackages() {
             {showAIPanel && (
               <>
                 <div className="fixed inset-0 z-40" onClick={() => setShowAIPanel(false)} />
-                <div className="absolute top-full right-0 mt-3 w-[360px] bg-[#111] border border-[#333] rounded-2xl shadow-2xl p-4 z-50 animate-in fade-in slide-in-from-top-2">
-                  <div className="flex items-center gap-2 mb-4 pb-3 border-b border-[#222]">
-                    <CalendarHeart size={18} className="text-purple-400" />
-                    <div>
-                      <h4 className="text-sm font-bold text-white tracking-tight">Sugestões do Sistema</h4>
-                      <p className="text-[10px] text-[#777]">Baseado no mês atual e conversões</p>
-                    </div>
-                  </div>
-                  <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 crm-custom-scrollbar">
-                    {getSeasonalSuggestions().map((sug, idx) => (
-                      <div 
-                        key={idx} 
-                        onClick={() => createFromSuggestion(sug)}
-                        className="p-3 rounded-xl border border-[#222] hover:border-purple-500/50 bg-[#1A1A1A] hover:bg-[#222] cursor-pointer transition-all group"
-                      >
-                        <div className="flex justify-between items-start mb-1">
-                          <h5 className="text-sm font-bold text-white group-hover:text-purple-400 transition-colors">{sug.title}</h5>
-                          {sug.price && <span className="text-[10px] bg-[#0A0A0A] text-[#AAA] px-2 py-0.5 rounded-full">{sug.price}</span>}
-                        </div>
-                        <p className="text-[11px] text-[#888] leading-relaxed mb-3">{sug.desc}</p>
-                        <span className="text-[10px] bg-purple-500/10 text-purple-400 px-2 py-0.5 rounded-full border border-purple-500/20 font-medium">
-                          {sug.tag}
-                        </span>
+                <div className="absolute top-full right-0 mt-3 w-[400px] bg-[#111] border border-[#333] rounded-2xl shadow-2xl p-4 z-50 animate-in fade-in slide-in-from-top-2">
+                  <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#222]">
+                    <div className="flex items-center gap-2">
+                      <CalendarHeart size={18} className="text-purple-400" />
+                      <div>
+                        <h4 className="text-sm font-bold text-white tracking-tight">Inteligência de Vendas</h4>
+                        <p className="text-[10px] text-[#777]">Sugestões contextuais para seu negócio</p>
                       </div>
-                    ))}
+                    </div>
+                    {/* Botão de Importação de CSV */}
+                    <label className="flex items-center gap-1.5 px-2.5 py-1.5 bg-[#222] hover:bg-[#333] border border-[#444] rounded-md cursor-pointer transition-colors text-[10px] font-bold text-[#AAA] hover:text-white">
+                      <span>Importar CSV Clientes</span>
+                      <input type="file" accept=".csv" className="hidden" onChange={handleCsvUpload} />
+                    </label>
                   </div>
+                  
+                  {isAnalyzing ? (
+                    <div className="flex flex-col items-center justify-center py-10 gap-3">
+                       <Sparkles size={24} className="text-purple-400 animate-spin-slow" />
+                       <div className="text-xs text-[#AAA] font-medium animate-pulse">A I.A. está lendo sua base de dados...</div>
+                    </div>
+                  ) : (
+                    <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 crm-custom-scrollbar">
+                      {csvInsights && (
+                        <div className="mb-3">
+                           <span className="text-[10px] font-bold uppercase tracking-wider text-[#10B981] ml-1">✨ Descobertas do seu CSV</span>
+                        </div>
+                      )}
+                      
+                      {(csvInsights || getSeasonalSuggestions()).map((sug, idx) => (
+                        <div 
+                          key={idx} 
+                          onClick={() => createFromSuggestion(sug)}
+                          className={`p-3 rounded-xl border ${csvInsights ? 'border-[#10B981]/30 hover:border-[#10B981]/80' : 'border-[#222] hover:border-purple-500/50'} bg-[#1A1A1A] hover:bg-[#222] cursor-pointer transition-all group`}
+                        >
+                          <div className="flex justify-between items-start mb-1">
+                            <h5 className={`text-sm font-bold text-white transition-colors ${csvInsights ? 'group-hover:text-[#10B981]' : 'group-hover:text-purple-400'}`}>{sug.title}</h5>
+                            {sug.price && <span className="text-[10px] bg-[#0A0A0A] text-[#AAA] px-2 py-0.5 rounded-full">{sug.price}</span>}
+                          </div>
+                          <p className="text-[11px] text-[#888] leading-relaxed mb-3">{sug.desc}</p>
+                          <span className={`text-[10px] px-2 py-0.5 rounded-full border font-medium ${csvInsights ? 'bg-[#10B981]/10 text-[#10B981] border-[#10B981]/20' : 'bg-purple-500/10 text-purple-400 border-purple-500/20'}`}>
+                            {sug.tag}
+                          </span>
+                        </div>
+                      ))}
+                      
+                      {csvInsights && (
+                         <div className="pt-2 text-center">
+                            <button onClick={() => setCsvInsights(null)} className="text-[10px] text-[#777] hover:text-[#FFF] underline">
+                               Voltar para Sugestões Sazonais Comuns
+                            </button>
+                         </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </>
             )}

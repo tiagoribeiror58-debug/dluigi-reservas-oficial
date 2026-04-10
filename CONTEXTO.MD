@@ -548,4 +548,29 @@ O arquivo backup (`utils_backup.ts`) foi removido após a restauração.
 - **CRMLayout:** Adicionado menu Drawer/Hamburguer para telas mobile, escondendo a sidebar lateral para liberar espaço útil e fornecendo uma sobreposição (overlay) que pode ser facilmente descartada.
 - **CRMPipeline:** Cabeçalho empilhado (flex-col) e busca (input) expandida para `w-full` em telas menores. O drag-and-drop Kanban continua se valendo do scroll horizontal flexível que já era nativo.
 - **CRMLeads:** Filtros de Status, Período e Busca redimensionados (`w-full` em mobile) usando layout de quebra nativo. A tabela já continha overflow para scroll horizontal que é ideal para tabelas no mobile.
-- **CRMLeadModal:** Reformulado o grid de informações do lead (`grid-cols-1` em mobile, `grid-cols-2` desktop) e os botões de ação na seção inferior de Pipeline e WhatsApp fluindo horizontal/verticalmente conforme a tela permite (inclusive com o Select usando o espaço útil restrito).
+- **CRMLeadModal:** Reformulado o grid de informações do lead (`grid-cols-1` em mobile, `grid-cols-2` desktop) e os botões de ação na seção inferior de Pipeline e WhatsApp fluindo horizontal/verticalmente conforme a tela permite (inclusive com o Select usando o espaço útil restrito).
+
+---
+
+# Atualizações (10/04/26) — Espaçamento e Inteligência Sazonal com CSV
+
+## 1. Ajuste de Espaçamento — Hero → Seção de Pacotes
+- **Problema:** `padding-top` de `96px` na `.section-packages` gerava um gap visual excessivo entre o Hero e a seção de ofertas.
+- **Solução:** Reduzido para `48px`. Simples mudança de 1 token CSS em `index.css`. Nenhuma janela de risco cross-componente.
+
+## 2. Feature: Importação de CSV na Inteligência Sazonal (CRMPackages.tsx)
+- **Contexto:** O painel de "Inteligência Sazonal" já sugeria pacotes por sazonalidade (mês atual). A feature expande isso para **contexto real do restaurante** via base de clientes.
+- **Flow implementado:**
+  1. Admin abre o dropdown de Inteligência Sazonal
+  2. Clica em "Importar CSV Clientes" e seleciona um arquivo `.csv`
+  3. O sistema lê o arquivo **100% no frontend via `FileReader`** (sem enviar dados para servidor — boa prática de privacidade)
+  4. Analisa palavras-chave no conteúdo do CSV: `vip`, `premium`, `kids`, `empresa`, `cnpj`, `nascimento`, etc.
+  5. Gera sugestões contextuais em ~1.8s com animação de loading (UX — feedback visual)
+  6. Permite clicar em qualquer sugestão para abrir o formulário pré-preenchido de criação de pacote
+  7. Botão "Voltar para Sugestões Sazonais Comuns" restaura o estado padrão
+
+- **Por que `FileReader` e não `fetch` para um servidor?**
+  > CSV de clientes pode conter dados sensíveis (nome, CPF, telefone). Processar no navegador é mais seguro e mais rápido — não precisa de endpoint, não tem LGPD concern de transferência.
+
+- **Estado de análise:** `isAnalyzing` + `csvInsights` adicionados ao estado local. Pattern simples: null = sugestões sazonais, array = resultados do CSV.
+- **Typecheck:** `npx tsc --noEmit` → exit code 0 (zero erros após implementação).
