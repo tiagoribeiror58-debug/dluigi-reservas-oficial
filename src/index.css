@@ -167,7 +167,7 @@ input[type=checkbox]{width:20px;height:20px;accent-color:var(--red);cursor:point
     max-height: 95vh !important;
   }
   .res-modal-pkg-info {
-    min-height: 250px !important;
+    min-height: 250px;
   }
   .res-modal-form-area {
     padding: 24px !important;
