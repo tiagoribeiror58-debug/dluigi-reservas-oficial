@@ -1,16 +1,17 @@
 export interface Package {
   id: string;
-  icon_name: string;
+  icon_name?: string;
   title: string;
   desc: string;
-  tag: string;
+  tag?: string;
   event_type: string;
   buffet: string;
-  color: string;
+  color?: string;
   active: boolean;
   image_urls?: string[];
   price?: string;
   visible_fields?: string[];
+  min_guests?: number;
   created_at?: string;
 }
 

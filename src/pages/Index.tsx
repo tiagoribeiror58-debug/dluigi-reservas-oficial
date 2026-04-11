@@ -66,7 +66,7 @@ export default function Home({ onSuccess }: HomeProps) {
       ...form,
       eventType: pkg.event_type,
       buffet: pkg.buffet,
-      guests: '12',
+      guests: '',
       notes: `Pacote selecionado: ${pkg.title}`,
       birthday: pkg.event_type === 'Aniversário' ? true : form.birthday,
     });
@@ -103,7 +103,7 @@ export default function Home({ onSuccess }: HomeProps) {
       phone: form.phone,
       date: form.date,
       time: form.time,
-      guests: parseInt(form.guests),
+      guests: parseInt(form.guests) || 1,
       event_type: form.eventType,
       buffet: form.buffet,
       birthday: form.birthday,

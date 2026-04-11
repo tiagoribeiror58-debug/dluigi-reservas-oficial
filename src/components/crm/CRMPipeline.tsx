@@ -2,9 +2,10 @@ import { useState, useMemo } from 'react';
 import { Reservation, CRMStage, Package } from '@/types/reservation';
 import CRMLeadModal from './CRMLeadModal';
 import { KanbanCard } from './KanbanCard';
+import AddReservationModal from './AddReservationModal';
 import { Input } from '@/components/ui/input';
 import { DragDropContext, Droppable, Draggable, type DropResult, type DroppableProvided, type DroppableStateSnapshot, type DraggableProvided, type DraggableStateSnapshot } from "@hello-pangea/dnd";
-import { Search } from 'lucide-react';
+import { Search, Plus } from 'lucide-react';
 import { toast } from "sonner";
 
 interface CRMPipelineProps {
@@ -12,6 +13,7 @@ interface CRMPipelineProps {
   packages: Package[];
   onUpdateStatus: (id: string, status: CRMStage) => void;
   onUpdateNotes: (id: string, notes: string) => void;
+  onCreated?: () => void;
 }
 
 const STAGES: { id: CRMStage; label: string; width: string }[] = [
@@ -22,9 +24,10 @@ const STAGES: { id: CRMStage; label: string; width: string }[] = [
   { id: 'perdido', label: 'Perdido', width: '200px' },
 ];
 
-export default function CRMPipeline({ leads, packages, onUpdateStatus, onUpdateNotes }: CRMPipelineProps) {
+export default function CRMPipeline({ leads, packages, onUpdateStatus, onUpdateNotes, onCreated }: CRMPipelineProps) {
   const [selectedLead, setSelectedLead] = useState<Reservation | null>(null);
   const [search, setSearch] = useState("");
+  const [isAdding, setIsAdding] = useState(false);
 
   const filtered = useMemo(() => {
     if (!search) return leads;
@@ -75,6 +78,12 @@ export default function CRMPipeline({ leads, packages, onUpdateStatus, onUpdateN
             className="pl-9 bg-[#111] border-[#333] text-white focus-visible:ring-[#FF5A5A]"
           />
         </div>
+        <button 
+          onClick={() => setIsAdding(true)}
+          className="flex items-center justify-center gap-2 px-4 py-2 bg-[#FF5A5A] hover:bg-[#FF4A4A] text-white rounded-lg transition-colors font-medium text-sm shadow-lg shadow-[#FF5A5A]/20 md:ml-4 whitespace-nowrap"
+        >
+          <Plus size={16} /> Nova Reserva
+        </button>
       </div>
 
       <DragDropContext onDragEnd={onDragEnd}>
@@ -137,6 +146,16 @@ export default function CRMPipeline({ leads, packages, onUpdateStatus, onUpdateN
             onUpdateNotes(id, notes);
             setSelectedLead(prev => prev ? { ...prev, admin_notes: notes } : null);
           }} 
+        />
+      )}
+
+      {isAdding && (
+        <AddReservationModal
+          packages={packages}
+          onClose={() => {
+            setIsAdding(false);
+            onCreated?.();
+          }}
         />
       )}
     </div>

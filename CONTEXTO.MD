@@ -573,4 +573,62 @@ O arquivo backup (`utils_backup.ts`) foi removido após a restauração.
   > CSV de clientes pode conter dados sensíveis (nome, CPF, telefone). Processar no navegador é mais seguro e mais rápido — não precisa de endpoint, não tem LGPD concern de transferência.
 
 - **Estado de análise:** `isAnalyzing` + `csvInsights` adicionados ao estado local. Pattern simples: null = sugestões sazonais, array = resultados do CSV.
-- **Typecheck:** `npx tsc --noEmit` → exit code 0 (zero erros após implementação).
+- **Typecheck:** `npx tsc --noEmit` → exit code 0 (zero erros após implementação).
+
+---
+
+# Atualizações (11/04/26) — Templates de Mensagem, Modal CRM, Foto Massiva e Layout Mobile
+
+## 1. Templates de Mensagem (Comunicação)
+Foi criado o módulo de **Templates de Mensagem** (`CRMTemplates.tsx`), armazenando no banco de dados (`message_templates`) textos padrões de comunicação para as fases de vendas (ex: Primeiro Contato, Follow-up, Cancelamento). Os templates possuem variáveis dinâmicas (como `{nome}`, `{data}`) que são convertidas em tempo real.
+
+## 2. Redesign Premium do Modal do Lead no CRM
+O `CRMLeadModal` sofreu um redesenho drástico para possuir uma interface *glassmorphism* avançada (estilo premium/JVC Carretas).
+- Duas colunas dinâmicas para organizar as infomações do pacote e dados do cliente.
+- Tabs de visualização rápida: Mensagens, Notas, Histórico e Detalhes.
+- Integração da aba "Mensagens" com os templates salvos, preenchendo sozinhos com dados do Lead, podendo compor chamadas para WhatsApp com apenas 1 clique de `Copiar Mensagem`.
+
+## 3. Ofertas Verticais no Mobile
+Removida a visualização contigênciada de lado-a-lado (2 colunas) em telas de celular minúsculas, forçando as ofertas (`packages-grid`) a se empiharem `1fr` no `@media(max-width:600px)` no arquivo `index.css`. Isso destrava um Scroll infinito limpo.
+
+## 4. Criação de Reserva Avulsa
+Para comportar os clientes *"walk-ins"* que ligam, o admin pode agora clicar no botão `+ Nova Reserva` no *pipeline* / quadro de leads. Isso renderiza o `AddReservationModal.tsx`, despachando na Supabase o registro que atualiza no quadro KanBan em tempo real.
+
+## 5. Múltiplas Fotos em Pacotes
+Refatorado o input de imagens na edição / criação do CRM de pacotes (upload). Inserido o campo `gallery` e adicionado suporte a Array `image_urls`. O input em React recebeu a Tag `<input multiple />` realizando o laço for automático de inserção no Supabase Storage.
+
+---
+
+# Atualizações (11/04/26) — Botão "Compartilhar Oferta" via WhatsApp
+
+## Feature: Compartilhamento de Pacotes pelo Lead (PackageCard.tsx)
+
+Adicionado botão **"Compartilhar"** em cada card de pacote na landing page pública.
+
+### Como funciona:
+1. Lead vê uma oferta interessante nos cards de pacotes
+2. Clica no botão verde "Compartilhar" (ícone Share2 da Lucide)
+3. O WhatsApp abre com mensagem **pré-montada automaticamente**:
+```
+👀 Olha essa oferta que vi na D'Luigi Pizzaria!
+
+*Aniversário em Família*
+Descrição do pacote...
+
+Noturno · R$ XXX
+
+Reservas pelo link:
+https://dluigi.vercel.app
+```
+
+### Decisões técnicas:
+- **`encodeURIComponent()`**: Converte a mensagem para formato URL seguro (acentos, emojis, espaços em caracteres ASCII)
+- **`wa.me/?text=...`**: Link universal do WhatsApp — funciona no mobile (abre app) e desktop (abre WhatsApp Web). Não requer número de destino, o lead escolhe para quem enviar.
+- **`e.stopPropagation()`**: O clique no botão Compartilhar não "sobe" para o card pai, portanto não abre o modal de reserva acidentalmente.
+- **`window.open('...', '_blank')`**: Abre o WhatsApp em nova aba, sem remover o usuário da landing page.
+
+### UI:
+- Botão verde translúcido com borda verde suave (paleta WhatsApp: `#25D366`)
+- Hover com fundo mais saturado (`0.18` de opacidade vs `0.08` padrão)
+- `marginLeft: auto` empurra o botão para a direita, balanceando os tags à esquerda
+- Ícone `Share2` 12px (da biblioteca existente Lucide React — zero dependência nova)

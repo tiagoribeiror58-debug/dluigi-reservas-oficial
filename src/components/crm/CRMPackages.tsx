@@ -53,23 +53,34 @@ export default function CRMPackages() {
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0 || !editingPkg) return;
-    const file = e.target.files[0];
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${Math.random()}.${fileExt}`;
-
+    
     setUploading(true);
-    const { error: uploadError } = await supabase.storage
-      .from('package_images')
-      .upload(fileName, file);
+    const newUrls: string[] = [];
+    let hasError = false;
 
-    if (uploadError) {
-      alert('Erro ao fazer upload: ' + uploadError.message);
-      setUploading(false);
-      return;
+    for (let i = 0; i < e.target.files.length; i++) {
+      const file = e.target.files[i];
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random()}.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('package_images')
+        .upload(fileName, file);
+
+      if (uploadError) {
+        hasError = true;
+        console.error('Erro ao fazer upload:', uploadError);
+      } else {
+        const { data } = supabase.storage.from('package_images').getPublicUrl(fileName);
+        newUrls.push(data.publicUrl);
+      }
     }
 
-    const { data } = supabase.storage.from('package_images').getPublicUrl(fileName);
-    const updatedUrls = [...(editingPkg.image_urls || []), data.publicUrl];
+    if (hasError) {
+       alert('Houve erro no upload de algumas imagens. As que deram certo foram adicionadas.');
+    }
+
+    const updatedUrls = [...(editingPkg.image_urls || []), ...newUrls];
     setEditingPkg({ ...editingPkg, image_urls: updatedUrls });
     setUploading(false);
   };
@@ -348,6 +359,7 @@ export default function CRMPackages() {
                   <input 
                     type="file" 
                     accept="image/*"
+                    multiple
                     onChange={handleImageUpload}
                     disabled={uploading}
                     className="hidden"

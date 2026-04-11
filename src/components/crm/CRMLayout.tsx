@@ -2,11 +2,12 @@ import { useState, useEffect } from 'react';
 import type { Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { Reservation, CRMView, Package } from '@/types/reservation';
-import { LayoutDashboard, Columns, Users, Package as PackageIcon, HelpCircle, LogOut, Menu, X } from 'lucide-react';
+import { LayoutDashboard, Columns, Users, Package as PackageIcon, LogOut, Menu, X, MessageSquare } from 'lucide-react';
 import CRMDashboard from './CRMDashboard';
 import CRMPipeline from './CRMPipeline';
 import CRMLeads from './CRMLeads';
 import CRMPackages from './CRMPackages';
+import CRMTemplates from './CRMTemplates';
 import './crm.css';
 
 interface CRMLayoutProps {
@@ -75,9 +76,10 @@ export default function CRMLayout({ session }: CRMLayoutProps) {
   const renderView = () => {
     switch (activeView) {
       case 'dashboard': return <CRMDashboard leads={leads} loading={loading} />;
-      case 'pipeline': return <CRMPipeline leads={leads} packages={packages} onUpdateStatus={handleUpdateStatus} onUpdateNotes={handleUpdateNotes} />;
+      case 'pipeline': return <CRMPipeline leads={leads} packages={packages} onUpdateStatus={handleUpdateStatus} onUpdateNotes={handleUpdateNotes} onCreated={loadLeads} />;
       case 'leads': return <CRMLeads leads={leads} packages={packages} onUpdateStatus={handleUpdateStatus} onUpdateNotes={handleUpdateNotes} />;
       case 'pacotes': return <CRMPackages />;
+      case 'templates': return <CRMTemplates />;
       default: return <div style={{ color: 'white', padding: 40 }}>Módulo em desenvolvimento...</div>;
     }
   };
@@ -88,6 +90,7 @@ export default function CRMLayout({ session }: CRMLayoutProps) {
       case 'pipeline': return 'Quadro de Reservas';
       case 'leads': return 'Lista de Reservas';
       case 'pacotes': return 'Sessões de Reservas';
+      case 'templates': return 'Templates de Mensagem';
       default: return 'CRM';
     }
   };
@@ -120,6 +123,7 @@ export default function CRMLayout({ session }: CRMLayoutProps) {
             { id: 'pipeline', label: 'Quadro de Reservas', icon: Columns },
             { id: 'leads', label: 'Lista de Reservas', icon: Users },
             { id: 'pacotes', label: 'Sessões de Reservas', icon: PackageIcon },
+            { id: 'templates', label: 'Templates', icon: MessageSquare },
           ].map((item) => (
             <button 
               key={item.id}

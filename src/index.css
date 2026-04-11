@@ -82,9 +82,9 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans
 .field{margin-bottom:28px}
 .lbl{display:block;font-size:12px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
 .opt{font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted);opacity:0.7}
-input[type=text],input[type=number],input[type=date],input[type=time],input[type=password],select,textarea{width:100%;padding:16px 20px;border:1px solid var(--border);border-radius:16px;font-size:16px;background:var(--glass-bg);color:#1A0A0A;outline:none;transition:all 0.3s cubic-bezier(0.16, 1, 0.3, 1);font-family:'Inter',sans-serif;box-shadow:0 2px 8px rgba(0,0,0,0.02)}
-input:focus,select:focus,textarea:focus{border-color:var(--red);background:#fff;box-shadow:0 0 0 3px rgba(122,21,21,0.1), 0 4px 16px rgba(122,21,21,0.05)}
-input.err,select.err{border-color:#C41E3A}
+:where(input[type=text],input[type=number],input[type=date],input[type=time],input[type=password],select,textarea){width:100%;padding:16px 20px;border:1px solid var(--border);border-radius:16px;font-size:16px;background:var(--glass-bg);color:#1A0A0A;outline:none;transition:all 0.3s cubic-bezier(0.16, 1, 0.3, 1);font-family:'Inter',sans-serif;box-shadow:0 2px 8px rgba(0,0,0,0.02)}
+:where(input:focus,select:focus,textarea:focus){border-color:var(--red);background:#fff;box-shadow:0 0 0 3px rgba(122,21,21,0.1), 0 4px 16px rgba(122,21,21,0.05)}
+:where(input.err,select.err){border-color:#C41E3A}
 .err-msg{font-size:12px;color:#C41E3A;margin-top:4px}
 .hint{font-size:12px;color:var(--muted);margin-top:4px}
 textarea{min-height:76px;resize:vertical}

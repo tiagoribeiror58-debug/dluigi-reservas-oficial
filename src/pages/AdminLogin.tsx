@@ -62,7 +62,7 @@ export default function AdminLogin() {
             value={email}
             onChange={(e) => { setEmail(e.target.value); setError(''); }}
             onKeyDown={handleKeyDown}
-            placeholder="admin@dluigi.com.br"
+            placeholder="acesso-restrito"
             className={error ? 'err' : ''}
             autoFocus
           />
