@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Package, Reservation, FormErrors } from '@/types/reservation';
 import ReservationForm from './ReservationForm';
-import { X, ChevronLeft, ChevronRight, ZoomIn } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface ReservationModalProps {
   isOpen: boolean;
@@ -116,28 +116,6 @@ export default function ReservationModal({
             <ChevronLeft size={20} />
           </button>
         )}
-        <button 
-          onClick={onClose}
-          style={{
-            position: 'absolute',
-            top: '20px',
-            right: !showForm && pkg ? '20px' : '20px',
-            background: 'rgba(0,0,0,0.2)',
-            border: 'none',
-            borderRadius: '50%',
-            width: '36px',
-            height: '36px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            zIndex: 20,
-            color: !showForm && pkg && currentImage ? '#FFF' : 'var(--txt-main)',
-            backdropFilter: 'blur(4px)'
-          }}
-        >
-          <X size={20} />
-        </button>
 
         {pkg && step < 2 && (
           <div className="res-modal-pkg-info" style={{
