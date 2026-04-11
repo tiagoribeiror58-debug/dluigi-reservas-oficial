@@ -29,14 +29,15 @@ export default function PackageCard({ package: pkg, isSelected, onSelect }: Pack
         }}
       >
         {!imageUrl && (() => {
-          const Icon = (Icons as any)[pkg.icon_name];
-          return Icon ? <Icon size={40} strokeWidth={1.5} color="var(--red)" /> : null;
+          const IconName = pkg.icon_name || 'Star';
+          const Icon = (Icons as any)[IconName] || Icons.Star;
+          return <Icon size={40} strokeWidth={1.5} color="var(--red)" />;
         })()}
       </div>
       <div className="pkg-body">
         <div className="pkg-title">{pkg.title}</div>
         <div className="pkg-desc">{pkg.desc}</div>
-        <div className="flex items-center gap-2 mt-2">
+        <div className="flex items-center flex-wrap gap-2 mt-auto pt-2">
           <span className="pkg-tag">{pkg.tag}</span>
           {pkg.price && (
             <span className="pkg-price block text-[13px] font-bold text-[#7A1515] bg-[#7A1515]/10 px-2.5 py-1 rounded-full border border-[#7A1515]/20">

@@ -45,12 +45,12 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans
 @media(max-width:960px){.packages-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:600px){.packages-grid{grid-template-columns:repeat(2,1fr);gap:12px}}
 
-.pkg-card{border-radius:24px;overflow:hidden;cursor:pointer;border:1px solid var(--border);transition:all .4s cubic-bezier(0.16, 1, 0.3, 1);background:var(--glass-bg);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:var(--glass-shadow)}
+.pkg-card{border-radius:24px;overflow:hidden;cursor:pointer;border:1px solid var(--border);transition:all .4s cubic-bezier(0.16, 1, 0.3, 1);background:var(--glass-bg);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:var(--glass-shadow);display:flex;flex-direction:column;height:100%}
 .pkg-card:hover{transform:translateY(-8px) scale(1.02);box-shadow:0 24px 48px rgba(122,21,21,.08);border-color:rgba(122,21,21,.1)}
 .pkg-card.selected{border-color:var(--red);box-shadow:0 0 0 2px var(--red), 0 24px 48px rgba(122,21,21,.12);}
 .pkg-img{width:100%;height:180px;object-fit:cover;display:block;background:#e8d5c4}
 .pkg-img-placeholder{width:100%;height:180px;display:flex;align-items:center;justify-content:center;font-size:48px;background:linear-gradient(135deg,#f5e6d3,#e8d0be)}
-.pkg-body{padding:24px}
+.pkg-body{padding:24px;display:flex;flex-direction:column;flex-grow:1}
 .pkg-emoji{font-size:24px;margin-bottom:12px; display:inline-block; background:#fff; padding:8px; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.05)}
 .pkg-title{font-family:'Inter',serif;font-size:18px;font-weight:600;color:#111;margin-bottom:8px;letter-spacing:-0.01em}
 .pkg-desc{font-size:14px;color:var(--muted);line-height:1.5;margin-bottom:16px;font-weight:400}
@@ -168,6 +168,8 @@ input[type=checkbox]{width:20px;height:20px;accent-color:var(--red);cursor:point
   }
   .res-modal-pkg-info {
     min-height: 250px;
+    padding: 24px !important;
+    aspect-ratio: auto !important;
   }
   .res-modal-form-area {
     padding: 24px !important;
@@ -175,6 +177,8 @@ input[type=checkbox]{width:20px;height:20px;accent-color:var(--red);cursor:point
 }
 @media(max-width: 600px) {
   .section-form { padding: 0 !important; }
+  .packages-grid { padding: 0 8px; }
+  .res-modal-pkg-info h3 { font-size: 26px !important; }
 }
 
 .res-modal-form-area .section-form {
