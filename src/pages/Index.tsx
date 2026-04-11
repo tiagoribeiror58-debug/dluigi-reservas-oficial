@@ -133,20 +133,14 @@ export default function Home({ onSuccess }: HomeProps) {
     <>
       <Hero onCtaClick={scrollToPackages} />
       
-      <div className="divider">
-        <hr />
-      </div>
-
-      <PackagesSection 
-        packages={packages} 
-        selectedPackage={selectedPackage} 
-        onSelectPackage={handlePackageSelect} 
-        title={landingConfig.title} 
-        subtitle={landingConfig.subtitle} 
-      />
-
-      <div className="divider">
-        <hr />
+      <div className="packages-wrapper-dark">
+        <PackagesSection 
+          packages={packages} 
+          selectedPackage={selectedPackage} 
+          onSelectPackage={handlePackageSelect} 
+          title={landingConfig.title} 
+          subtitle={landingConfig.subtitle} 
+        />
       </div>
 
       <VideoSection 
